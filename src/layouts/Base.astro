@@ -39,6 +39,7 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'htt
   @import '../styles/tokens.css';
 
   html, body { background: var(--lp-paper); }
+  html { overflow-x: hidden; }
   body {
     color: var(--lp-ink);
     font-family: var(--lp-sans);
@@ -47,7 +48,15 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'htt
     font-weight: 400;
     margin: 0;
     padding-bottom: env(safe-area-inset-bottom, 0);
+    /* Belt-and-braces guard: nothing in the layout should ever cause a
+       horizontal scrollbar on mobile. If something does, it gets clipped
+       rather than triggering a horizontal scroll. */
+    overflow-x: hidden;
+    max-width: 100vw;
   }
+  /* Every direct media element gets a hard cap to avoid intrinsic-size
+     overflow on narrow viewports. */
+  img, svg, video { max-width: 100%; height: auto; }
 
   .lp-shell {
     max-width: 1200px;
@@ -82,5 +91,28 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'htt
   /* room for mobile sticky bar */
   @media (max-width: 720px) {
     body { padding-bottom: 88px; }
+
+    /* All sections share a tighter vertical rhythm on mobile.
+       Inline-style overrides on individual sections still win for the
+       Hero (which has its own mobile override), but the default lp-section
+       padding here is the right baseline for everything else. */
+    .lp-section {
+      padding-top: 56px !important;
+      padding-bottom: 56px !important;
+    }
+
+    /* Form / item grids that use auto-fit need an explicit single-column
+       lock on mobile — auto-fit can otherwise resolve to >1 column when
+       the page renders at sizes where the browser's grid track sizing
+       picks up intrinsic widths from inputs / placeholders. */
+    .note-form,
+    .contact-form,
+    .risk-grid,
+    .how-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Tighten typography that overshoots on narrow screens */
+    .risk-answer { font-size: clamp(56px, 18vw, 96px) !important; }
   }
 </style>

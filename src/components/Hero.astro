@@ -34,9 +34,9 @@ const railLabel = siteHint ? 'R E' : 'FOR LANDOWNERS';
           You see the number before agreeing anything, and you are free to say no.
         </p>
         <p class="sub-lede">
-          This page is here because you scanned the QR code on a letter I sent you. It is the
-          same explanation I would give over the phone, set down in one place so you can read it
-          in your own time.
+          {siteHint
+            ? 'This page is here because you scanned the QR code on a letter I sent you. It is the same explanation I would give over the phone, set down in one place so you can read it in your own time.'
+            : 'This is the same explanation I would give over the phone, set down in one place so you can read it in your own time.'}
         </p>
       </div>
 
@@ -153,6 +153,18 @@ const railLabel = siteHint ? 'R E' : 'FOR LANDOWNERS';
   .cta-hint { max-width: 28ch; }
 
   .read-on { margin-top: 32px; }
+
+  /* Mobile: trim the generous Hero top padding so the headline doesn't sit
+     deep below the header on small screens. Padding-bottom can stay snug too. */
+  @media (max-width: 720px) {
+    :global(section#hero.lp-section) {
+      padding-top: 36px !important;
+      padding-bottom: 56px !important;
+    }
+    .lp-hero-rule { margin: 32px 0 24px; }
+    .signature-block { margin-top: 32px; }
+    .cta-row { margin-top: 40px; gap: 20px 24px; }
+  }
   .lp-text-cta {
     display: inline-block;
     font-size: 15px;
