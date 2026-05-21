@@ -1,0 +1,86 @@
+---
+// Base layout — head, fonts, design tokens, mobile sticky-call spacing.
+export interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+}
+
+const {
+  title = 'Laterna+Partners — for landowners',
+  description = 'A fixed-price offer for your land, conditional on planning permission. We cover the planning work and take the risk. You see the number before agreeing anything.',
+  canonical,
+} = Astro.props;
+
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'https://laterna.partners').toString();
+---
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/assets/favicon.svg" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="robots" content="index, follow" />
+  </head>
+  <body id="top">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/tokens.css';
+
+  html, body { background: var(--lp-paper); }
+  body {
+    color: var(--lp-ink);
+    font-family: var(--lp-sans);
+    font-size: var(--lp-fs-body-lg);
+    line-height: var(--lp-lh-loose);
+    font-weight: 400;
+    margin: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .lp-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+  @media (max-width: 720px) {
+    .lp-shell { padding: 0 22px; }
+  }
+
+  .lp-section {
+    border-bottom: 1px solid var(--lp-rule);
+  }
+  .lp-section:last-of-type { border-bottom: 0; }
+
+  .lp-mg {
+    display: grid;
+    grid-template-columns: minmax(0, 168px) minmax(0, 1fr);
+    gap: 32px;
+    align-items: baseline;
+  }
+  @media (max-width: 860px) {
+    .lp-mg {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+
+  .lp-fine { color: var(--lp-mute); font-size: var(--lp-fs-small); }
+
+  /* room for mobile sticky bar */
+  @media (max-width: 720px) {
+    body { padding-bottom: 88px; }
+  }
+</style>

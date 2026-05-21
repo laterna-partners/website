@@ -1,0 +1,97 @@
+---
+import Wordmark from './Wordmark.astro';
+import Label from './Label.astro';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="lp-shell footer-grid">
+    <div>
+      <Wordmark size={16} />
+      <p class="footer-blurb">
+        A small London-based practice, helping landowners explore the planning value of their
+        sites.
+      </p>
+    </div>
+
+    <div>
+      <Label asTag="div" tone="mute" style="margin-bottom: 12px;">Office</Label>
+      <div class="footer-text">
+        Laterna+Partners<br/>
+        7 Daffodil Close<br/>
+        London CR4 4FS
+      </div>
+    </div>
+
+    <div>
+      <Label asTag="div" tone="mute" style="margin-bottom: 12px;">Contact</Label>
+      <div class="footer-text contact-lines">
+        <a href="tel:+447471127212" class="footer-link">+44 7471 127212</a><br/>
+        <a href="mailto:hayri@laterna.partners" class="footer-link">hayri@laterna.partners</a>
+      </div>
+    </div>
+
+    <div>
+      <Label asTag="div" tone="mute" style="margin-bottom: 12px;">Privacy</Label>
+      <p class="footer-privacy">
+        All enquiries are treated in strict confidence. No cookies, no third-party
+        trackers, no mailing lists.
+      </p>
+    </div>
+  </div>
+
+  <div class="lp-shell footer-meta">
+    <span>© {year} Laterna+Partners</span>
+    <span>Registered in England &amp; Wales</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--lp-rule); }
+  .footer-grid {
+    padding-top: 64px;
+    padding-bottom: 72px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 36px;
+    align-items: start;
+  }
+  .footer-blurb {
+    font-size: 13px;
+    color: var(--lp-mute);
+    margin: 14px 0 0;
+    line-height: 1.7;
+    max-width: 34ch;
+  }
+  .footer-text {
+    font-size: 13px;
+    color: var(--lp-ink);
+    line-height: 1.7;
+  }
+  .contact-lines { line-height: 1.9; }
+  .footer-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--lp-rule);
+    padding-bottom: 1px;
+  }
+  .footer-privacy {
+    font-size: 13px;
+    color: var(--lp-mute);
+    margin: 0;
+    line-height: 1.7;
+    max-width: 32ch;
+  }
+  .footer-meta {
+    padding-top: 18px;
+    padding-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-top: 1px solid var(--lp-rule);
+    font-size: 12px;
+    color: var(--lp-mute);
+    letter-spacing: 0.02em;
+  }
+</style>

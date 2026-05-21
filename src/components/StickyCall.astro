@@ -1,0 +1,63 @@
+---
+---
+<div class="sticky-call">
+  <div class="sticky-grid">
+    <a href="tel:+447471127212" class="sticky-cell sticky-call-cell">
+      <span class="sticky-label sticky-label--accent">Call Hayri</span>
+      <span class="sticky-value">+44 7471 127212</span>
+    </a>
+    <a href="mailto:hayri@laterna.partners" class="sticky-cell">
+      <span class="sticky-label sticky-label--mute">Write</span>
+      <span class="sticky-value sticky-value--small">hayri@laterna.partners</span>
+    </a>
+  </div>
+</div>
+
+<style>
+  .sticky-call {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    background: var(--lp-paper);
+    border-top: 1px solid var(--lp-rule);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    box-shadow: 0 -8px 24px -16px rgba(0,0,0,0.08);
+  }
+  .sticky-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .sticky-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 14px 8px;
+    text-decoration: none;
+    color: var(--lp-ink-display);
+    min-height: 64px;
+  }
+  .sticky-call-cell { border-right: 1px solid var(--lp-rule); }
+  .sticky-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-right: -0.2em;
+  }
+  .sticky-label--accent { color: var(--lp-accent); }
+  .sticky-label--mute { color: var(--lp-mute); }
+  .sticky-value {
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+  .sticky-value--small { font-size: 15px; letter-spacing: 0; }
+
+  @media (min-width: 720px) {
+    .sticky-call { display: none; }
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+import Section from './Section.astro';
+import Marginalia from './Marginalia.astro';
+import Label from './Label.astro';
+
+const REVERSAL_ITEMS = [
+  { eyebrow: 'No fee', body: 'You do not pay for the planning work, the time, or anything else. Ever.' },
+  { eyebrow: 'No obligation', body: 'You are free to walk away at any point, for any reason, with no penalty.' },
+  { eyebrow: 'No pressure', body: 'You see the agreed price before signing anything. The choice is yours.' },
+  { eyebrow: 'No publicity', body: 'Every enquiry is treated in strict confidence. No mailing lists, no sharing.' },
+];
+---
+<Section id="risk" style="padding-top: 96px; padding-bottom: 104px;">
+  <Marginalia label="What's the catch?" sub="The thing every landowner asks.">
+    <div class="risk-wrap">
+      <h2 class="risk-question">What you give up by getting in touch.</h2>
+      <div class="risk-answer">Nothing.</div>
+
+      <hr class="risk-rule" />
+
+      <div class="risk-grid">
+        {REVERSAL_ITEMS.map((item) => (
+          <div class="risk-item">
+            <Label asTag="div">{item.eyebrow}</Label>
+            <p class="risk-body">{item.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <p class="risk-coda">
+        The land remains yours throughout, and remains yours unless you actively decide to
+        proceed at a price you are happy with.
+      </p>
+    </div>
+  </Marginalia>
+</Section>
+
+<style>
+  .risk-wrap { max-width: 52rem; }
+  .risk-question {
+    font-size: clamp(20px, 2.4vw, 24px);
+    line-height: 1.4;
+    font-weight: 400;
+    color: var(--lp-ink);
+    margin: 0;
+    letter-spacing: 0;
+    text-wrap: balance;
+    max-width: 34ch;
+  }
+  .risk-answer {
+    margin-top: 16px;
+    font-size: clamp(72px, 14vw, 168px);
+    line-height: 0.95;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    color: var(--lp-ink-display);
+  }
+  .risk-rule {
+    border: 0;
+    border-top: 1px solid var(--lp-rule);
+    margin: 40px 0 32px;
+  }
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 40px 56px;
+    max-width: 56rem;
+  }
+  .risk-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .risk-body {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--lp-ink);
+    margin: 0;
+    max-width: 32ch;
+  }
+  .risk-coda {
+    margin-top: 40px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--lp-ink);
+    max-width: 54ch;
+    font-style: italic;
+    font-weight: 300;
+  }
+</style>

@@ -1,0 +1,408 @@
+/* =============================================================
+   LATERNA+PARTNERS — Design Tokens
+   Colour, typography, and semantic styles.
+   Import this file at the top of any HTML mock.
+   ============================================================= */
+
+/* Webfont — Mulish (Vernon Adams). Avenir-adjacent geometric humanist
+   sans, full 200–900 weight range via variable font, NOT one of the
+   SaaS-default fonts. Falls back to the Helvetica Neue stack.
+   Self-hosted from /fonts/ — GDPR-clean, no CDN dependency. */
+@font-face {
+  font-family: "Mulish";
+  src: url("/fonts/Mulish-VariableFont_wght.ttf") format("truetype");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Mulish";
+  src: url("/fonts/Mulish-Italic-VariableFont_wght.ttf") format("truetype");
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* ------- Brand palette ----------------------------------- */
+  /* Never use pure black. Primary text is a warm dark grey. */
+  --lp-ink:          #4A4A4A;   /* Primary text                 */
+  --lp-ink-display:  #3D3D3D;   /* Display / headlines          */
+  --lp-mute:         #888888;   /* Subtle / secondary text      */
+  --lp-rule:         #BBBBBB;   /* Hairline rules, dividers     */
+  --lp-paper:        #FFFFFF;   /* Background                   */
+  --lp-paper-soft:   #FAFAFA;   /* Optional, sparingly          */
+
+  /* Accent blue — Pantone 283 C. SIGNAL, NOT DECORATION.
+     Permitted uses ONLY:
+       — Letter-spaced uppercase labels (REFERENCE, DATE…)
+       — The dot in "laterna.partners"
+       — The "RE" prefix on subject lines
+       — Single hairline rules
+       — The + in the logomark
+     Never as a background. Never on body text.
+     Never introduce a secondary accent.                       */
+  --lp-accent:       #92C1E9;   /* Pantone 283 C — the one accent */
+
+  /* ------- Type stack ------------------------------------- */
+  /* Geometric sans throughout. Single typeface — no pairing.
+     Mulish is the chosen web typeface (Avenir-adjacent, geometric,
+     humanist warmth, NOT a SaaS-default like Inter/Manrope/DM Sans).
+     Falls back to the Helvetica Neue stack if the font fails to load. */
+  --lp-sans: "Mulish", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* ------- Type scale (rem-based, 1rem = 16px) ------------ */
+  --lp-fs-micro:   0.75rem;     /* 12 — letter-spaced labels   */
+  --lp-fs-small:   0.8125rem;   /* 13 — captions, marginalia   */
+  --lp-fs-body:    1rem;        /* 16 — body min on mobile     */
+  --lp-fs-body-lg: 1.125rem;    /* 18 — body on desktop        */
+  --lp-fs-lede:    1.25rem;     /* 20 — opening paragraph      */
+  --lp-fs-h4:      1.375rem;    /* 22                          */
+  --lp-fs-h3:      1.75rem;     /* 28                          */
+  --lp-fs-h2:      2.25rem;     /* 36                          */
+  --lp-fs-h1:      3rem;        /* 48                          */
+  --lp-fs-display: 4rem;        /* 64 — sparingly              */
+
+  /* ------- Line heights ----------------------------------- */
+  --lp-lh-tight:  1.15;
+  --lp-lh-snug:   1.3;
+  --lp-lh-body:   1.55;
+  --lp-lh-loose:  1.7;          /* long-form letter copy       */
+
+  /* ------- Weights ---------------------------------------- */
+  /* Modernist letterhead — restrained. Mostly 300/400/500.   */
+  --lp-w-light:   300;
+  --lp-w-book:    400;
+  --lp-w-medium:  500;
+  --lp-w-bold:    700;          /* used very sparingly         */
+
+  /* ------- Tracking --------------------------------------- */
+  --lp-tr-tight:  -0.01em;
+  --lp-tr-base:   0;
+  --lp-tr-wide:   0.06em;
+  --lp-tr-label:  0.18em;       /* the signature letter-spaced label */
+
+  /* ------- Spacing scale (8px base) ----------------------- */
+  --lp-s-1:  4px;
+  --lp-s-2:  8px;
+  --lp-s-3:  12px;
+  --lp-s-4:  16px;
+  --lp-s-5:  24px;
+  --lp-s-6:  32px;
+  --lp-s-7:  48px;
+  --lp-s-8:  64px;
+  --lp-s-9:  96px;
+  --lp-s-10: 128px;
+  --lp-s-11: 192px;             /* page-margin moments         */
+
+  /* ------- Layout ----------------------------------------- */
+  --lp-measure:    62ch;        /* ideal reading measure       */
+  --lp-measure-sm: 48ch;
+  --lp-page-max:   1200px;
+  --lp-letter-w:   720px;       /* A4-ish letter column        */
+
+  /* ------- Borders / hairlines ---------------------------- */
+  /* Hairline is the system's only divider.                  */
+  --lp-hairline:        1px solid var(--lp-rule);
+  --lp-hairline-accent: 1px solid var(--lp-accent);
+  --lp-hairline-ink:    1px solid var(--lp-ink);
+
+  /* ------- Radii ------------------------------------------ */
+  /* Architectural. Sharp corners. Radii reserved for the
+     occasional pill-shaped input/CTA. No rounded cards.     */
+  --lp-r-none: 0;
+  --lp-r-pill: 999px;
+
+  /* ------- Shadows ---------------------------------------- */
+  /* No shadows. Depth comes from white space and rules only. */
+  --lp-shadow-none: none;
+
+  /* ------- Motion ----------------------------------------- */
+  /* Restrained: short fades, no bounces, no slide-ins.      */
+  --lp-ease:        cubic-bezier(0.2, 0.6, 0.2, 1);
+  --lp-dur-fast:    120ms;
+  --lp-dur-base:    180ms;
+  --lp-dur-slow:    320ms;
+}
+
+/* =============================================================
+   Accessibility — reduced motion
+   Even though motion is already minimal, honour the OS preference. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =============================================================
+   Focus — visible always when keyboard-navigating.
+   2px solid ink, 4px offset. No accent blue (would clash with the
+   accent-as-signal rule for labels).                              */
+:focus-visible {
+  outline: 2px solid var(--lp-ink-display);
+  outline-offset: 4px;
+  border-radius: 1px;
+}
+
+/* =============================================================
+   Base / element defaults
+   ============================================================= */
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--lp-paper);
+  color: var(--lp-ink);
+  font-family: var(--lp-sans);
+  font-size: var(--lp-fs-body);
+  line-height: var(--lp-lh-body);
+  font-weight: var(--lp-w-book);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--lp-accent);
+  color: var(--lp-ink-display);
+}
+
+/* =============================================================
+   Semantic type — apply by class or element.
+   ============================================================= */
+
+/* Display — the "first 5 seconds" headline */
+.lp-display, h1.lp-display {
+  font-size: var(--lp-fs-display);
+  line-height: var(--lp-lh-tight);
+  font-weight: var(--lp-w-light);
+  letter-spacing: var(--lp-tr-tight);
+  color: var(--lp-ink-display);
+  margin: 0 0 var(--lp-s-6);
+  text-wrap: balance;
+}
+
+/* h1–h4 — title hierarchy */
+.lp-h1, h1 {
+  font-size: var(--lp-fs-h1);
+  line-height: var(--lp-lh-tight);
+  font-weight: var(--lp-w-light);
+  letter-spacing: var(--lp-tr-tight);
+  color: var(--lp-ink-display);
+  margin: 0 0 var(--lp-s-5);
+  text-wrap: balance;
+}
+.lp-h2, h2 {
+  font-size: var(--lp-fs-h2);
+  line-height: var(--lp-lh-snug);
+  font-weight: var(--lp-w-light);
+  letter-spacing: var(--lp-tr-tight);
+  color: var(--lp-ink-display);
+  margin: 0 0 var(--lp-s-4);
+  text-wrap: balance;
+}
+.lp-h3, h3 {
+  font-size: var(--lp-fs-h3);
+  line-height: var(--lp-lh-snug);
+  font-weight: var(--lp-w-book);
+  color: var(--lp-ink-display);
+  margin: 0 0 var(--lp-s-4);
+  text-wrap: balance;
+}
+.lp-h4, h4 {
+  font-size: var(--lp-fs-h4);
+  line-height: var(--lp-lh-snug);
+  font-weight: var(--lp-w-medium);
+  color: var(--lp-ink-display);
+  margin: 0 0 var(--lp-s-3);
+}
+
+/* Lede — the opening paragraph after a headline */
+.lp-lede {
+  font-size: var(--lp-fs-lede);
+  line-height: var(--lp-lh-body);
+  font-weight: var(--lp-w-light);
+  color: var(--lp-ink);
+  max-width: var(--lp-measure);
+  text-wrap: pretty;
+}
+
+/* Body */
+.lp-body, p {
+  font-size: var(--lp-fs-body-lg);
+  line-height: var(--lp-lh-loose);
+  font-weight: var(--lp-w-book);
+  color: var(--lp-ink);
+  max-width: var(--lp-measure);
+  text-wrap: pretty;
+}
+
+/* Small / secondary */
+.lp-small {
+  font-size: var(--lp-fs-small);
+  line-height: var(--lp-lh-body);
+  color: var(--lp-mute);
+}
+
+/* The signature letter-spaced uppercase label — accent blue.
+   Use for: REFERENCE, DATE, FROM, OFFICE, section eyebrows. */
+.lp-label {
+  font-size: var(--lp-fs-micro);
+  font-weight: 600;                       /* heavier strokes for the pale accent */
+  text-transform: uppercase;
+  letter-spacing: var(--lp-tr-label);
+  color: var(--lp-accent);
+  line-height: 1.4;
+  margin: 0 0 var(--lp-s-3);
+  display: block;
+  /* compensate for trailing letter-spacing pushing the right edge */
+  margin-right: calc(var(--lp-tr-label) * -1);
+}
+
+/* A version of the label without colour — for marginalia/captions */
+.lp-label--mute {
+  color: var(--lp-mute);
+}
+
+/* The "R E" subject-line prefix — the only place blue meets ink */
+.lp-subject {
+  font-size: var(--lp-fs-body);
+  font-weight: var(--lp-w-book);
+  color: var(--lp-ink);
+  margin: var(--lp-s-5) 0;
+  letter-spacing: var(--lp-tr-base);
+}
+.lp-subject::before {
+  content: "R E ";
+  color: var(--lp-accent);
+  letter-spacing: var(--lp-tr-wide);
+  font-weight: var(--lp-w-medium);
+  margin-right: 0.25em;
+}
+
+/* The wordmark — "laterna.partners" with blue dot */
+.lp-wordmark {
+  font-family: var(--lp-sans);
+  font-weight: var(--lp-w-book);
+  letter-spacing: 0.02em;
+  color: var(--lp-ink-display);
+  font-size: 1rem;
+}
+.lp-wordmark .dot { color: var(--lp-accent); }
+
+/* Letter signoff — letter-spaced role under a name */
+.lp-signoff-role {
+  font-size: var(--lp-fs-small);
+  text-transform: uppercase;
+  letter-spacing: var(--lp-tr-label);
+  color: var(--lp-mute);
+  font-weight: var(--lp-w-book);
+}
+
+/* Links — inherit colour, hairline underline. No accent blue on text. */
+a.lp-link, .lp-prose a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--lp-rule);
+  padding-bottom: 1px;
+  transition: border-color var(--lp-dur-base) var(--lp-ease);
+}
+a.lp-link:hover, .lp-prose a:hover {
+  border-color: var(--lp-ink);
+}
+
+/* Hairline rule — the system's only divider */
+.lp-rule {
+  border: 0;
+  border-top: var(--lp-hairline);
+  margin: var(--lp-s-6) 0;
+}
+.lp-rule--accent {
+  border-top: var(--lp-hairline-accent);
+}
+
+/* Prose container — paragraphs of long-form letter-style copy */
+.lp-prose {
+  max-width: var(--lp-measure);
+  color: var(--lp-ink);
+}
+.lp-prose > * + * {
+  margin-top: var(--lp-s-5);
+}
+.lp-prose p {
+  margin: 0;
+  font-size: var(--lp-fs-body-lg);
+  line-height: var(--lp-lh-loose);
+}
+
+/* Buttons — restrained. Single text-link CTA is preferred over a button. */
+.lp-btn {
+  font-family: inherit;
+  font-size: var(--lp-fs-body);
+  font-weight: var(--lp-w-medium);
+  letter-spacing: 0.02em;
+  color: var(--lp-ink-display);
+  background: transparent;
+  border: 1px solid var(--lp-ink-display);
+  border-radius: var(--lp-r-none);
+  padding: 14px 28px;
+  cursor: pointer;
+  transition:
+    background var(--lp-dur-base) var(--lp-ease),
+    color var(--lp-dur-base) var(--lp-ease);
+}
+.lp-btn:hover {
+  background: var(--lp-ink-display);
+  color: var(--lp-paper);
+}
+.lp-btn:active { opacity: 0.85; }
+
+.lp-btn--ghost {
+  border-color: var(--lp-rule);
+  color: var(--lp-ink);
+}
+.lp-btn--ghost:hover {
+  background: transparent;
+  color: var(--lp-ink-display);
+  border-color: var(--lp-ink-display);
+}
+
+/* Inline text link styled as a CTA — preferred over a boxed button */
+.lp-cta {
+  display: inline-block;
+  font-size: var(--lp-fs-body);
+  font-weight: var(--lp-w-medium);
+  color: var(--lp-ink-display);
+  text-decoration: none;
+  border-bottom: 1px solid var(--lp-ink-display);
+  padding-bottom: 2px;
+  transition: opacity var(--lp-dur-base) var(--lp-ease);
+}
+.lp-cta:hover { opacity: 0.6; }
+
+/* Form inputs — minimal. Hairline underline, no boxes. */
+.lp-input {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--lp-rule);
+  border-radius: 0;
+  padding: 12px 0;
+  font: inherit;
+  color: var(--lp-ink);
+  width: 100%;
+  transition: border-color var(--lp-dur-base) var(--lp-ease);
+}
+.lp-input::placeholder { color: var(--lp-mute); }
+.lp-input:focus {
+  outline: none;
+  border-bottom-color: var(--lp-ink);
+}
+.lp-input--boxed {
+  border: 1px solid var(--lp-rule);
+  padding: 12px 14px;
+}
+.lp-input--boxed:focus { border-color: var(--lp-ink); }

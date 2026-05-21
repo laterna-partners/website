@@ -1,0 +1,19 @@
+{
+  "name": "laterna-partners-site",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/vercel": "^8.2.7",
+    "astro": "^5.16.0",
+    "resend": "^4.8.0",
+    "@supabase/supabase-js": "^2.45.4"
+  }
+}

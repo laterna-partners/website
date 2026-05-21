@@ -1,0 +1,17 @@
+---
+interface Props {
+  id?: string;
+  divider?: boolean;
+  style?: string;
+}
+const { id, divider = true, style = '' } = Astro.props;
+---
+<section
+  id={id}
+  class:list={[divider && 'lp-section']}
+  style={`padding-top: 88px; padding-bottom: 88px; ${style}`}
+>
+  <div class="lp-shell">
+    <slot />
+  </div>
+</section>

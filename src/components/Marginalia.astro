@@ -1,0 +1,18 @@
+---
+interface Props { label: string; sub?: string; }
+const { label, sub } = Astro.props;
+import Label from './Label.astro';
+---
+<div class="lp-mg">
+  <div>
+    <Label asTag="div">{label}</Label>
+    {sub && <div class="lp-fine sub">{sub}</div>}
+  </div>
+  <div>
+    <slot />
+  </div>
+</div>
+
+<style>
+  .sub { margin-top: 10px; line-height: 1.6; }
+</style>

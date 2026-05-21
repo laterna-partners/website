@@ -1,0 +1,29 @@
+---
+export const prerender = false;
+import Base from '../layouts/Base.astro';
+import RefStrip from '../components/RefStrip.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import Hero from '../components/Hero.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import RiskReversal from '../components/RiskReversal.astro';
+import AboutHayri from '../components/AboutHayri.astro';
+import TakeHomeNote from '../components/TakeHomeNote.astro';
+import Contact from '../components/Contact.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import StickyCall from '../components/StickyCall.astro';
+
+const ref = Astro.locals.ref ?? null;
+const siteHint = Astro.locals.siteHint ?? null;
+---
+<Base>
+  <RefStrip refValue={ref} />
+  <SiteHeader />
+  <Hero siteHint={siteHint} />
+  <HowItWorks />
+  <RiskReversal />
+  <AboutHayri showPortrait={true} />
+  <TakeHomeNote available={false} />
+  <Contact showForm={true} />
+  <SiteFooter />
+  <StickyCall />
+</Base>

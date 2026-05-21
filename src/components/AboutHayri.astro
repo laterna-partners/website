@@ -1,0 +1,113 @@
+---
+import Section from './Section.astro';
+import Marginalia from './Marginalia.astro';
+interface Props { showPortrait?: boolean; }
+const { showPortrait = true } = Astro.props;
+---
+<Section id="about" style="padding-top: 96px; padding-bottom: 96px;">
+  <Marginalia label="About" sub="The practice.">
+    <div class:list={['about-grid', showPortrait && 'with-portrait']}>
+      {showPortrait && (
+        <figure class="portrait">
+          <img
+            src="/assets/hayri-portrait.jpg"
+            alt="Hayri Demirçapa, founder of Laterna+Partners"
+            width="280"
+            height="350"
+            loading="lazy"
+          />
+          <figcaption>Hayri Demirçapa · London, 2026</figcaption>
+        </figure>
+      )}
+
+      <div class="about-body">
+        <div class="about-name">Hayri Demirçapa</div>
+        <div class="about-role">Founder &amp; Architect</div>
+
+        <p>
+          I am an architect by training, based in London. Most developers look at land and see what
+          could be quickly built and sold. I tend to look at it the way an architect does; what
+          could be designed there, who it could serve, what the right thing to do with this piece
+          of ground might be.
+        </p>
+        <p>
+          Laterna+Partners is small and considered on purpose. I work on a small number of sites
+          a year, and I am not interested in being on every plot in the country. If we end up
+          working together, you have my full attention.
+        </p>
+        <p class="about-fine">
+          Every enquiry is treated in strict confidence. No mailing lists. No sharing of
+          details with third parties.
+        </p>
+      </div>
+    </div>
+  </Marginalia>
+</Section>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .about-grid.with-portrait {
+    grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
+  }
+  @media (max-width: 720px) {
+    .about-grid.with-portrait { grid-template-columns: 1fr; }
+  }
+
+  .portrait { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .portrait img {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    background: #F2F2F2;
+    border: 1px solid var(--lp-rule);
+  }
+  .portrait figcaption {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--lp-mute);
+    margin-right: -0.18em;
+  }
+
+  .about-body { max-width: 56ch; }
+  .about-name {
+    font-size: clamp(22px, 2.6vw, 28px);
+    line-height: 1.2;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--lp-ink-display);
+    margin-bottom: 8px;
+  }
+  .about-role {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--lp-mute);
+    margin-right: -0.18em;
+    margin-bottom: 28px;
+  }
+  .about-body p {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--lp-ink);
+    margin: 20px 0 0;
+    text-wrap: pretty;
+  }
+  .about-body p:first-of-type { margin-top: 0; }
+  .about-fine {
+    font-size: 15px !important;
+    line-height: 1.7 !important;
+    color: var(--lp-mute) !important;
+    margin-top: 24px !important;
+  }
+</style>

@@ -1,0 +1,271 @@
+---
+import Section from './Section.astro';
+import Marginalia from './Marginalia.astro';
+interface Props { available?: boolean; }
+const { available = false } = Astro.props;
+---
+<Section id="note" style="padding-top: 88px; padding-bottom: 88px;">
+  <Marginalia label="A take-home note" sub="I will send it to you.">
+    <div class="note-wrap">
+      <h2 class="note-head">"How option agreements actually work"</h2>
+
+      <p class="note-body">
+        If you would like to understand the legal mechanics before deciding whether to talk,
+        leave your details and I will send you a short reference note. It covers what an
+        option agreement actually commits you to, what it does not, typical timelines, the
+        kinds of questions worth asking, and where things can go wrong.
+      </p>
+
+      <form
+        id="note-form"
+        method="POST"
+        action="/api/note-signup"
+        class="note-form"
+      >
+        <div class="full-row">
+          <label class="field-label">
+            <span class="field-name">Your name *</span>
+            <input name="name" type="text" autocomplete="name" placeholder="Jane Smith" required />
+          </label>
+        </div>
+        <label class="field-label">
+          <span class="field-name">Email *</span>
+          <input name="email" type="email" autocomplete="email" placeholder="you@example.co.uk" required />
+        </label>
+        <label class="field-label">
+          <span class="field-name">Phone</span>
+          <input name="phone" type="tel" autocomplete="tel" placeholder="Optional" />
+        </label>
+        <!-- honeypot for bots -->
+        <input type="text" name="company" class="honeypot" tabindex="-1" autocomplete="off" />
+        <input type="hidden" name="form_type" value="note-signup" />
+
+        <div class="full-row submit-row">
+          <button type="submit" class="lp-submit">
+            {available ? 'Send me the note' : 'Send it to me when it is ready'}
+          </button>
+          {!available && (
+            <span class="prep-flag">In preparation</span>
+          )}
+          <span class="lp-fine privacy-note">
+            Goes only to me. No mailing list, no sharing with third parties.
+          </span>
+        </div>
+      </form>
+
+      <div id="note-sent" class="note-sent" hidden>
+        <div class="sent-label">Thank you</div>
+        <p class="sent-body">
+          {available
+            ? 'The note is on its way to your inbox. You can also download it now.'
+            : 'I have your details. The note will land in your inbox as soon as it is finished.'}
+        </p>
+        <div class="sent-actions">
+          {available && (
+            <a href="/notes/option-agreements.pdf" download class="lp-ghost-button">
+              <span>Download the note now</span>
+              <span class="ghost-meta">PDF · 280 KB</span>
+            </a>
+          )}
+          <button type="button" id="note-reset" class="reset-btn">Submit different details</button>
+        </div>
+      </div>
+    </div>
+  </Marginalia>
+</Section>
+
+<script>
+  const form = document.getElementById('note-form') as HTMLFormElement | null;
+  const sent = document.getElementById('note-sent');
+  const reset = document.getElementById('note-reset');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+    try {
+      const res = await fetch('/api/note-signup', { method: 'POST', body: data });
+      if (!res.ok) throw new Error('Failed');
+      form.hidden = true;
+      sent?.removeAttribute('hidden');
+      sent?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (_err) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Try again'; }
+      alert('Sorry — something went wrong. Please try again, or email hayri@laterna.partners.');
+    }
+  });
+
+  reset?.addEventListener('click', () => {
+    sent?.setAttribute('hidden', '');
+    form?.removeAttribute('hidden');
+    const btn = form?.querySelector('button[type=submit]') as HTMLButtonElement;
+    if (btn) { btn.disabled = false; }
+    form?.reset();
+  });
+</script>
+
+<style>
+  .note-wrap { max-width: 56rem; }
+  .note-head {
+    font-size: clamp(24px, 3.2vw, 36px);
+    line-height: 1.2;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--lp-ink-display);
+    margin: 0;
+    max-width: 26ch;
+    text-wrap: balance;
+  }
+  .note-body {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--lp-ink);
+    margin: 24px 0 0;
+    max-width: 60ch;
+    text-wrap: pretty;
+  }
+
+  .note-form {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 28px 40px;
+    max-width: 720px;
+  }
+  .full-row { grid-column: 1 / -1; }
+  .field-label { display: flex; flex-direction: column; gap: 10px; }
+  .field-name {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--lp-mute);
+    margin-right: -0.18em;
+  }
+  .field-label input,
+  .field-label textarea {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--lp-rule);
+    border-radius: 0;
+    padding: 10px 0;
+    font: inherit;
+    font-size: 16px;
+    color: var(--lp-ink-display);
+    width: 100%;
+    font-family: var(--lp-sans);
+    outline: none;
+    transition: border-color 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+  .field-label input:focus,
+  .field-label textarea:focus { border-bottom-color: var(--lp-ink-display); }
+
+  .honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+
+  .submit-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px 28px;
+    margin-top: 8px;
+  }
+  .lp-submit {
+    font-family: var(--lp-sans);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--lp-paper);
+    background: var(--lp-ink-display);
+    border: 1px solid var(--lp-ink-display);
+    border-radius: 0;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: background 180ms cubic-bezier(0.2, 0.6, 0.2, 1), color 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+  .lp-submit:hover {
+    background: var(--lp-paper);
+    color: var(--lp-ink-display);
+  }
+  .lp-submit:disabled { opacity: 0.5; cursor: wait; }
+  .prep-flag {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--lp-accent);
+    margin-right: -0.2em;
+  }
+  .privacy-note { max-width: 38ch; }
+
+  .note-sent {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--lp-accent);
+    max-width: 52rem;
+  }
+  .sent-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--lp-accent);
+    margin-right: -0.18em;
+    margin-bottom: 14px;
+  }
+  .sent-body {
+    font-size: 19px;
+    line-height: 1.55;
+    font-weight: 400;
+    color: var(--lp-ink-display);
+    margin: 0;
+    max-width: 40ch;
+    text-wrap: balance;
+  }
+  .sent-actions {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+  }
+  .lp-ghost-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--lp-ink-display);
+    background: transparent;
+    border: 1px solid var(--lp-ink-display);
+    border-radius: 0;
+    padding: 14px 24px;
+    text-decoration: none;
+    transition: background 180ms cubic-bezier(0.2, 0.6, 0.2, 1), color 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+  .lp-ghost-button:hover {
+    background: var(--lp-ink-display);
+    color: var(--lp-paper);
+  }
+  .ghost-meta { color: var(--lp-mute); font-size: 13px; }
+  .reset-btn {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font-family: var(--lp-sans);
+    font-size: 14px;
+    color: var(--lp-mute);
+    cursor: pointer;
+    border-bottom: 1px solid var(--lp-rule);
+    padding-bottom: 2px;
+  }
+</style>

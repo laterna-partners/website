@@ -1,0 +1,88 @@
+---
+import Section from './Section.astro';
+import Marginalia from './Marginalia.astro';
+
+const HOW_STEPS = [
+  {
+    eyebrow: 'One',
+    title: 'I explore the planning potential.',
+    body: 'I take on the time and cost of working out whether planning permission could realistically be obtained on your site. You don’t pay for any of this work, and there is no commitment from you while it happens.',
+  },
+  {
+    eyebrow: 'Two',
+    title: 'I make you an offer, agreed upfront.',
+    body: 'If planning looks achievable, I make you an offer; a fixed price I would pay to buy the site, agreed in writing before anything else happens. For some sites that number is higher than what the land would fetch today; for others it is broadly in line. Either way you see it before signing, and you are free to say no.',
+  },
+  {
+    eyebrow: 'Three',
+    title: 'If it doesn’t work, you’ve lost nothing.',
+    body: 'If planning isn’t going to work, the arrangement simply falls away. No fees, no obligations, and the land remains entirely yours, unchanged.',
+  },
+];
+---
+<Section id="how">
+  <Marginalia label="How it works" sub="Three steps, in plain English.">
+    <div class="how-wrap">
+      <h2 class="how-head">I cover the work. You keep the land. You decide.</h2>
+
+      <div class="how-grid">
+        {HOW_STEPS.map((step) => (
+          <div class="how-step">
+            <div class="how-eyebrow">{step.eyebrow}</div>
+            <h3 class="how-title">{step.title}</h3>
+            <p class="how-body">{step.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Marginalia>
+</Section>
+
+<style>
+  .how-wrap { max-width: 52rem; }
+  .how-head {
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.15;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--lp-ink-display);
+    margin: 0 0 48px;
+    max-width: 20ch;
+    text-wrap: balance;
+  }
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 48px;
+  }
+  .how-step {
+    border-top: 1px solid var(--lp-rule);
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .how-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--lp-accent);
+    text-transform: uppercase;
+    margin-right: -0.18em;
+  }
+  .how-title {
+    font-size: 22px;
+    line-height: 1.25;
+    font-weight: 400;
+    color: var(--lp-ink-display);
+    margin: 0;
+    text-wrap: balance;
+  }
+  .how-body {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--lp-ink);
+    margin: 0;
+    text-wrap: pretty;
+  }
+</style>

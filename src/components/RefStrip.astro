@@ -1,0 +1,41 @@
+---
+import Label from './Label.astro';
+interface Props { refValue?: string | null; }
+const { refValue } = Astro.props;
+if (!refValue) return null;
+---
+<div class="ref-strip">
+  <div class="lp-shell ref-row">
+    <Label>Letter</Label>
+    <span class="ref-value">{refValue}</span>
+    <span class="ref-thanks">— thank you for scanning. This page is for you.</span>
+  </div>
+</div>
+
+<style>
+  .ref-strip {
+    border-top: 1px solid var(--lp-accent);
+    border-bottom: 1px solid var(--lp-rule);
+    background: var(--lp-paper);
+  }
+  .ref-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .ref-value {
+    font-size: 13px;
+    color: var(--lp-ink-display);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .ref-thanks {
+    font-size: 13px;
+    color: var(--lp-mute);
+    letter-spacing: 0.01em;
+  }
+</style>

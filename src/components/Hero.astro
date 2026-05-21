@@ -1,0 +1,176 @@
+---
+import Section from './Section.astro';
+interface Props { siteHint?: string | null; }
+const { siteHint } = Astro.props;
+const head = 'You may be sitting on more value than you realise.';
+---
+<Section id="hero" style="padding-top: 96px; padding-bottom: 112px;">
+  <!-- R E subject — letter-style subject line with accent prefix -->
+  <div class="re-line">
+    <span class="re-prefix">R E</span>
+    <span class="re-rest">
+      {siteHint ? (
+        <>the land at <span class="re-emphasis">{siteHint}</span></>
+      ) : 'land you may own across the United Kingdom'}
+    </span>
+  </div>
+
+  <h1 class="lp-hero-head">{head}</h1>
+
+  <hr class="lp-hero-rule" />
+
+  <div class="lede-block">
+    <p class="lede">
+      I make landowners across the UK a fixed-price offer for their land, conditional on
+      planning permission. I cover the planning work and take the risk that goes with it.
+      You see the number before agreeing anything, and you are free to say no.
+    </p>
+    <p class="sub-lede">
+      This page is here because you scanned the QR code on a letter I sent you. It is the
+      same explanation I would give over the phone, set down in one place so you can read it
+      in your own time.
+    </p>
+  </div>
+
+  <div class="signature-block">
+    <div class="sig-name">Hayri Demirçapa</div>
+    <div class="sig-role">Founder &amp; Architect, Laterna+Partners</div>
+  </div>
+
+  <div class="cta-row">
+    <a href="tel:+447471127212" class="phone-cta">+44 7471 127212</a>
+
+    <div class="cta-meta">
+      <div class="cta-label">Direct line</div>
+      <div class="lp-fine cta-hint">
+        Weekdays, 09:00–18:00. A short, no-commitment call is the best place to start.
+      </div>
+    </div>
+  </div>
+
+  <div class="read-on">
+    <a href="#how" class="lp-text-cta">Or read how this usually works <span class="arrow">→</span></a>
+  </div>
+</Section>
+
+<style>
+  .re-line {
+    margin-bottom: 56px;
+    font-size: 14px;
+    color: var(--lp-ink);
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .re-prefix {
+    color: var(--lp-accent);
+    letter-spacing: 0.18em;
+    font-weight: 600;
+    margin-right: -0.18em;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+  .re-rest { color: var(--lp-mute); }
+  .re-emphasis { color: var(--lp-ink-display); }
+
+  .lp-hero-head {
+    font-family: var(--lp-sans);
+    font-size: clamp(40px, 7.2vw, 88px);
+    line-height: 1.05;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: var(--lp-ink-display);
+    margin: 0;
+    max-width: 18ch;
+    text-wrap: balance;
+  }
+
+  .lp-hero-rule {
+    border: 0;
+    border-top: 1px solid var(--lp-accent);
+    margin: 48px 0 36px;
+    max-width: 320px;
+  }
+
+  .lede-block { max-width: 54ch; }
+  .lede {
+    font-size: clamp(18px, 2.1vw, 22px);
+    line-height: 1.55;
+    font-weight: 300;
+    color: var(--lp-ink);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .sub-lede {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--lp-mute);
+    margin: 20px 0 0;
+    text-wrap: pretty;
+  }
+
+  .signature-block {
+    margin-top: 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 15px;
+    color: var(--lp-ink);
+  }
+  .sig-name { color: var(--lp-ink-display); font-weight: 500; }
+  .sig-role {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--lp-mute);
+    margin-right: -0.18em;
+  }
+
+  .cta-row {
+    margin-top: 64px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px 56px;
+  }
+  .phone-cta {
+    font-size: clamp(26px, 3.6vw, 36px);
+    font-weight: 300;
+    color: var(--lp-ink-display);
+    text-decoration: none;
+    letter-spacing: -0.005em;
+    border-bottom: 1px solid var(--lp-ink-display);
+    padding-bottom: 4px;
+    transition: opacity 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+  .phone-cta:hover { opacity: 0.6; }
+
+  .cta-meta { display: flex; flex-direction: column; gap: 8px; }
+  .cta-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--lp-accent);
+    margin-right: -0.18em;
+  }
+  .cta-hint { max-width: 28ch; }
+
+  .read-on { margin-top: 32px; }
+  .lp-text-cta {
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--lp-ink-display);
+    text-decoration: none;
+    border-bottom: 1px solid var(--lp-ink-display);
+    padding-bottom: 3px;
+    letter-spacing: 0.005em;
+    transition: opacity 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+  .lp-text-cta:hover { opacity: 0.6; }
+  .arrow { margin-left: 8px; }
+</style>

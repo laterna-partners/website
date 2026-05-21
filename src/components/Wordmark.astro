@@ -1,0 +1,19 @@
+---
+interface Props { size?: number; color?: string; }
+const { size = 17, color } = Astro.props;
+---
+<a href="#top" class="lp-wordmark" style={`font-size:${size}px; ${color ? `color:${color};` : ''}`}>
+  laterna<span class="dot">.</span>partners
+</a>
+
+<style>
+  .lp-wordmark {
+    display: inline-block;
+    font-family: var(--lp-sans);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--lp-ink-display);
+    text-decoration: none;
+  }
+  .dot { color: var(--lp-accent); }
+</style>

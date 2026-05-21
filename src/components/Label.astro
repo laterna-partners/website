@@ -1,0 +1,37 @@
+---
+interface Props {
+  asTag?: 'span' | 'div';
+  tone?: 'accent' | 'mute' | 'ink';
+  style?: string;
+  class?: string;
+}
+const { asTag: Tag = 'span', tone = 'accent', style = '', class: extraClass = '' } = Astro.props;
+const isBlock = Tag !== 'span';
+const color =
+  tone === 'mute' ? 'var(--lp-mute)' :
+  tone === 'ink'  ? 'var(--lp-ink-display)' :
+                    'var(--lp-accent)';
+---
+<Tag
+  class:list={['lp-label', isBlock && 'lp-label--block', extraClass]}
+  style={`color:${color}; ${style}`}
+>
+  <slot />
+</Tag>
+
+<style>
+  .lp-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    line-height: 1.5;
+    white-space: nowrap;
+    display: inline-block;
+    margin-right: -0.18em;
+  }
+  .lp-label--block {
+    white-space: normal;
+    display: block;
+  }
+</style>
