@@ -5,15 +5,15 @@ const { siteHint } = Astro.props;
 const head = 'You may be sitting on more value than you realise.';
 ---
 <Section id="hero" style="padding-top: 96px; padding-bottom: 112px;">
-  <!-- R E subject — letter-style subject line with accent prefix -->
-  <div class="re-line">
-    <span class="re-prefix">R E</span>
-    <span class="re-rest">
-      {siteHint ? (
-        <>the land at <span class="re-emphasis">{siteHint}</span></>
-      ) : 'land you may own across the United Kingdom'}
-    </span>
-  </div>
+  {/* R E subject — only shown for QR arrivals where we have a site hint */}
+  {siteHint && (
+    <div class="re-line">
+      <span class="re-prefix">R E</span>
+      <span class="re-rest">
+        the land at <span class="re-emphasis">{siteHint}</span>
+      </span>
+    </div>
+  )}
 
   <h1 class="lp-hero-head">{head}</h1>
 
