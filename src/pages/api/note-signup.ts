@@ -61,8 +61,11 @@ function renderRequesterEmail(firstName: string): { html: string; text: string }
     'Best,',
     '',
     'Hayri Demirçapa',
-    'Founder & Architect',
-    '+44 7471 127212 · laterna.partners',
+    'Founder | Architect',
+    '',
+    't  +44 7471 127212',
+    '',
+    'laterna.partners',
   ].join('\n');
 
   // HTML body. Inline styles only — email clients strip <style> tags
@@ -88,19 +91,32 @@ function renderRequesterEmail(firstName: string): { html: string; text: string }
               <p style="margin:0 0 20px;">Read it in your own time. If anything is unclear, or you want to talk through how it might apply to your own land, the direct line is <a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:underline;">+44 7471 127212</a> &mdash; weekdays, 09:00&ndash;18:00. You can also reply to this email.</p>
               <p style="margin:0;">Best,</p>
 
-              <!-- Signature -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:36px;">
+              <!-- Signature: vertical letterhead. One element per line,
+                   logo as the brand anchor in the middle, t: prefix
+                   following architecture-firm convention. No top rule so
+                   the logo carries the visual weight. -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:44px;">
                 <tr>
-                  <td style="padding-top:24px;border-top:1px solid #92C1E9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
-                    <p style="margin:0;font-size:16px;color:#2A2A2A;font-weight:500;letter-spacing:-0.005em;">Hayri Demirçapa</p>
-                    <p style="margin:6px 0 0;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.18em;font-weight:600;">Founder &amp; Architect</p>
-                    <p style="margin:16px 0 0;font-size:14px;color:#4A4A4A;line-height:1.6;">
-                      <a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:none;">+44 7471 127212</a>
-                      <span style="color:#BBBBBB;padding:0 8px;">&middot;</span>
-                      <a href="https://laterna.partners" style="color:#4A4A4A;text-decoration:none;">laterna.partners</a>
+                  <td style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+                    <p style="margin:0;font-size:17px;color:#2A2A2A;font-weight:600;letter-spacing:-0.005em;line-height:1.3;">Hayri Demirçapa</p>
+                    <p style="margin:6px 0 0;font-size:14px;color:#888888;font-weight:400;line-height:1.5;">Founder&nbsp;&nbsp;|&nbsp;&nbsp;Architect</p>
+
+                    <p style="margin:36px 0;">
+                      <img src="cid:${LOGO_CID}" alt="Laterna+Partners" width="150" style="display:block;width:150px;height:auto;border:0;outline:none;text-decoration:none;">
                     </p>
-                    <p style="margin:24px 0 0;">
-                      <img src="cid:${LOGO_CID}" alt="Laterna+Partners" width="160" style="display:block;width:160px;height:auto;border:0;outline:none;text-decoration:none;">
+
+                    <p style="margin:0;font-size:14px;color:#4A4A4A;line-height:1.6;">
+                      <span style="color:#AAAAAA;">t</span>&nbsp;&nbsp;<a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:none;">+44 7471 127212</a>
+                    </p>
+
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="left" style="margin:22px 0 14px;">
+                      <tr>
+                        <td style="width:28px;border-top:1px solid #D0D0D0;font-size:0;line-height:0;height:1px;">&nbsp;</td>
+                      </tr>
+                    </table>
+
+                    <p style="margin:0;font-size:14px;color:#4A4A4A;line-height:1.6;">
+                      <a href="https://laterna.partners" style="color:#4A4A4A;text-decoration:underline;">laterna.partners</a>
                     </p>
                   </td>
                 </tr>
