@@ -61,7 +61,7 @@ function renderRequesterEmail(firstName: string): { html: string; text: string }
     'Best,',
     '',
     'Hayri Demirçapa',
-    'Founder & Architect, Laterna+Partners',
+    'Founder & Architect',
     '+44 7471 127212 · laterna.partners',
   ].join('\n');
 
@@ -93,7 +93,7 @@ function renderRequesterEmail(firstName: string): { html: string; text: string }
                 <tr>
                   <td style="padding-top:24px;border-top:1px solid #92C1E9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
                     <p style="margin:0;font-size:16px;color:#2A2A2A;font-weight:500;letter-spacing:-0.005em;">Hayri Demirçapa</p>
-                    <p style="margin:6px 0 0;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.18em;font-weight:600;">Founder &amp; Architect, Laterna+Partners</p>
+                    <p style="margin:6px 0 0;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.18em;font-weight:600;">Founder &amp; Architect</p>
                     <p style="margin:16px 0 0;font-size:14px;color:#4A4A4A;line-height:1.6;">
                       <a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:none;">+44 7471 127212</a>
                       <span style="color:#BBBBBB;padding:0 8px;">&middot;</span>
