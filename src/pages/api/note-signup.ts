@@ -101,7 +101,7 @@ function renderRequesterEmail(firstName: string): { html: string; text: string }
                     <p style="margin:0;font-size:17px;color:#2A2A2A;font-weight:600;letter-spacing:-0.005em;line-height:1.3;">Hayri Demirçapa</p>
                     <p style="margin:6px 0 0;font-size:14px;color:#888888;font-weight:400;line-height:1.5;">Founder&nbsp;&nbsp;|&nbsp;&nbsp;Architect</p>
 
-                    <p style="margin:36px 0;">
+                    <p style="margin:20px 0;">
                       <img src="cid:${LOGO_CID}" alt="Laterna+Partners" width="150" style="display:block;width:150px;height:auto;border:0;outline:none;text-decoration:none;">
                     </p>
 
@@ -109,11 +109,7 @@ function renderRequesterEmail(firstName: string): { html: string; text: string }
                       <span style="color:#AAAAAA;">t</span>&nbsp;&nbsp;<a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:none;">+44 7471 127212</a>
                     </p>
 
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="left" style="margin:22px 0 14px;">
-                      <tr>
-                        <td style="width:28px;border-top:1px solid #D0D0D0;font-size:0;line-height:0;height:1px;">&nbsp;</td>
-                      </tr>
-                    </table>
+                    <div style="width:28px;border-top:1px solid #D0D0D0;margin:18px 0 14px;font-size:0;line-height:0;">&nbsp;</div>
 
                     <p style="margin:0;font-size:14px;color:#4A4A4A;line-height:1.6;">
                       <a href="https://laterna.partners" style="color:#4A4A4A;text-decoration:underline;">laterna.partners</a>
