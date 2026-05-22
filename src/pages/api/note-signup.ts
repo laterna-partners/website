@@ -178,11 +178,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
         attachments: [
           {
             filename: PDF_FILENAME,
-            content: pdfBuffer,
+            // Resend's REST API expects base64-encoded content as a string.
+            // A raw Buffer gets JSON-serialised to {type:'Buffer',data:[...]}
+            // which the API can't decode — attachment ends up corrupt or missing.
+            content: pdfBuffer.toString('base64'),
+            contentType: 'application/pdf',
           },
           {
             filename: LOGO_FILENAME,
-            content: logoBuffer,
+            content: logoBuffer.toString('base64'),
             contentType: 'image/png',
             inlineContentId: LOGO_CID,
           },
