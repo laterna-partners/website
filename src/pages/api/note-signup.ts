@@ -1,8 +1,8 @@
-// POST /api/note-signup — handles the take-home-note form.
+// POST /api/note-signup: handles the take-home-note form.
 // Two emails go out (best-effort, both are non-blocking):
-//   1. To the requester — branded HTML email with PDF attached and inline-CID
+//   1. To the requester: branded HTML email with PDF attached and inline-CID
 //      logo in the signature.
-//   2. To Hayri — plain-text lead notification, no attachment.
+//   2. To Hayri: plain-text lead notification, no attachment.
 // The instant-download link on the page always works regardless of email outcome.
 import type { APIRoute } from 'astro';
 import { readFile } from 'node:fs/promises';
@@ -55,8 +55,8 @@ function renderRequesterEmail(firstName: string): { html: string; text: string }
     'go wrong.',
     '',
     'Read it in your own time. If anything is unclear, or you want to talk through',
-    'how it might apply to your own land, the direct line is +44 7471 127212 —',
-    'weekdays, 09:00–18:00. You can also reply to this email.',
+    'how it might apply to your own land, the direct line is +44 7471 127212,',
+    'weekdays 09:00–18:00. You can also reply to this email.',
     '',
     'Best,',
     '',
@@ -68,7 +68,7 @@ function renderRequesterEmail(firstName: string): { html: string; text: string }
     'laterna.partners',
   ].join('\n');
 
-  // HTML body. Inline styles only — email clients strip <style> tags
+  // HTML body. Inline styles only; email clients strip <style> tags
   // inconsistently. Table-based outer layout for Outlook safety; the
   // signature uses a <table> so border-top renders cleanly everywhere.
   // Colours match the site tokens (ink #4A4A4A, accent #92C1E9, mute #888).
@@ -88,7 +88,7 @@ function renderRequesterEmail(firstName: string): { html: string; text: string }
             <td style="padding:0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#4A4A4A;font-size:16px;line-height:1.65;">
               <p style="margin:0 0 20px;">Hi ${safeFirst},</p>
               <p style="margin:0 0 20px;">As promised, here is the short reference note on how option agreements work. It covers what an option agreement actually commits you to, what it does not, typical timelines, the kinds of questions worth asking, and where things can go wrong.</p>
-              <p style="margin:0 0 20px;">Read it in your own time. If anything is unclear, or you want to talk through how it might apply to your own land, the direct line is <a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:underline;">+44 7471 127212</a> &mdash; weekdays, 09:00&ndash;18:00. You can also reply to this email.</p>
+              <p style="margin:0 0 20px;">Read it in your own time. If anything is unclear, or you want to talk through how it might apply to your own land, the direct line is <a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:underline;">+44 7471 127212</a>, weekdays 09:00&ndash;18:00. You can also reply to this email.</p>
               <p style="margin:0;">Best,</p>
 
               <!-- Signature: vertical letterhead. One element per line,
@@ -110,7 +110,7 @@ function renderRequesterEmail(firstName: string): { html: string; text: string }
                     </p>
 
                     <p style="margin:10px 0 0;font-size:14px;color:#4A4A4A;line-height:1.6;">
-                      <a href="https://laterna.partners" style="color:#4A4A4A;text-decoration:underline;">laterna.partners</a>
+                      <a href="https://laterna.partners/landowners" style="color:#4A4A4A;text-decoration:underline;">laterna.partners</a>
                     </p>
                   </td>
                 </tr>
@@ -190,7 +190,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
             filename: PDF_FILENAME,
             // Resend's REST API expects base64-encoded content as a string.
             // A raw Buffer gets JSON-serialised to {type:'Buffer',data:[...]}
-            // which the API can't decode — attachment ends up corrupt or missing.
+            // which the API can't decode (attachment ends up corrupt or missing).
             content: pdfBuffer.toString('base64'),
             contentType: 'application/pdf',
           },
@@ -206,13 +206,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
         ],
       });
     } catch (err) {
-      // Don't fail the request — the instant-download link on the page still works.
+      // Don't fail the request. The instant-download link on the page still works.
       console.error('[note-signup] requester email failed', err);
     }
   }
 
   // ---- Email 2: notification to Hayri -------------------------------------
-  const subject = `Note signup — ${name}`;
+  const subject = `Note signup: ${name}`;
   const body = [
     `Name: ${name}`,
     `Email: ${email}`,

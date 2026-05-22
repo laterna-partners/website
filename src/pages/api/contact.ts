@@ -1,4 +1,4 @@
-// POST /api/contact — handles the "Write something here instead" form
+// POST /api/contact: handles the "Write something here instead" form
 // from the Contact section. Emails Hayri via Resend, persists to Supabase.
 // Returns 200 with JSON on success, 400/500 on failure. The client-side
 // script swaps to a thank-you state when it sees 200.
@@ -16,7 +16,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(JSON.stringify({ error: 'Bad form data' }), { status: 400 });
   }
 
-  // Honeypot — silently accept and discard
+  // Honeypot: silently accept and discard
   if ((form.get('company') as string | null)?.trim()) {
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   }
@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   // Email Hayri
   const resend = getResend();
-  const subject = `Laterna enquiry — ${name}`;
+  const subject = `Laterna enquiry: ${name}`;
   const body = [
     `Name: ${name}`,
     `Reach: ${contact}`,
@@ -67,7 +67,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     } catch (err) {
       console.error('[contact] resend failed', err);
-      // Don't fail the request — we already saved to Supabase
+      // Don't fail the request; we already saved to Supabase
     }
   } else {
     console.log('[contact] would email:', subject, '\n', body);
