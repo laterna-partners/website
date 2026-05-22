@@ -188,7 +188,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
             filename: LOGO_FILENAME,
             content: logoBuffer.toString('base64'),
             contentType: 'image/png',
-            inlineContentId: LOGO_CID,
+            // Resend v6 renamed inlineContentId -> contentId (API field
+            // content_id). Setting this flips the attachment to inline
+            // disposition so the cid:laterna-logo reference resolves.
+            contentId: LOGO_CID,
           },
         ],
       });
