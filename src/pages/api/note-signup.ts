@@ -1,11 +1,16 @@
 // POST /api/note-signup — handles the take-home-note form.
-// Same logic as /api/contact but tagged as 'note-signup' so we can later
-// segment leads (people who wanted the PDF vs. people who wrote in directly).
+// Two emails go out (best-effort, both are non-blocking):
+//   1. To the requester — the option-agreement PDF attached, brief covering note.
+//   2. To Hayri — lead notification, no attachment.
+// The instant-download link on the page always works regardless of email outcome.
 import type { APIRoute } from 'astro';
 import { getResend, NOTIFY_EMAIL, FROM_EMAIL } from '../../lib/resend';
 import { getSupabase } from '../../lib/supabase';
 
 export const prerender = false;
+
+const PDF_PATH = '/notes/Laterna%20-%20Option%20Agreements.pdf';
+const PDF_FILENAME = 'Laterna - Option Agreements.pdf';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   let form: FormData;
@@ -40,6 +45,57 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const resend = getResend();
+
+  // ---- Email 1: PDF to the requester (best-effort) ------------------------
+  // Fetch the PDF from our own static layer rather than touching the disk —
+  // public/ files aren't bundled into the serverless function on Vercel.
+  if (resend) {
+    try {
+      const pdfUrl = new URL(PDF_PATH, request.url).toString();
+      const pdfRes = await fetch(pdfUrl);
+      if (!pdfRes.ok) {
+        throw new Error(`PDF fetch failed: ${pdfRes.status}`);
+      }
+      const pdfBuffer = Buffer.from(await pdfRes.arrayBuffer());
+
+      const firstName = name.split(/\s+/)[0];
+      const requesterSubject = 'The note on option agreements';
+      const requesterBody = [
+        `Hi ${firstName},`,
+        '',
+        'As promised, here is the short reference note on how option agreements work.',
+        'It covers what an option agreement actually commits you to, what it does not,',
+        'typical timelines, the kinds of questions worth asking, and where things can go wrong.',
+        '',
+        'Read it in your own time. If anything is unclear, or you want to talk through',
+        'how it might apply to your own land, the direct line is +44 7471 127212 —',
+        'weekdays, 09:00–18:00. You can also reply to this email.',
+        '',
+        'Best,',
+        'Hayri Demirçapa',
+        'Founder & Architect, Laterna+Partners',
+      ].join('\n');
+
+      await resend.emails.send({
+        from: FROM_EMAIL,
+        to: email,
+        replyTo: NOTIFY_EMAIL,
+        subject: requesterSubject,
+        text: requesterBody,
+        attachments: [
+          {
+            filename: PDF_FILENAME,
+            content: pdfBuffer,
+          },
+        ],
+      });
+    } catch (err) {
+      // Don't fail the request — the instant-download link on the page still works.
+      console.error('[note-signup] requester email failed', err);
+    }
+  }
+
+  // ---- Email 2: notification to Hayri -------------------------------------
   const subject = `Note signup — ${name}`;
   const body = [
     `Name: ${name}`,
@@ -47,7 +103,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     phone && `Phone: ${phone}`,
     locals.ref && `Arrived via: ${locals.ref}`,
     '',
-    'They want the option-agreement explainer note when it is ready.',
+    'They requested the option-agreement explainer PDF.',
   ].filter(Boolean).join('\n');
 
   if (resend) {
@@ -60,7 +116,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         text: body,
       });
     } catch (err) {
-      console.error('[note-signup] resend failed', err);
+      console.error('[note-signup] notification email failed', err);
     }
   } else {
     console.log('[note-signup] would email:', subject, '\n', body);
