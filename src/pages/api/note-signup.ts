@@ -1,7 +1,8 @@
 // POST /api/note-signup — handles the take-home-note form.
 // Two emails go out (best-effort, both are non-blocking):
-//   1. To the requester — the option-agreement PDF attached, brief covering note.
-//   2. To Hayri — lead notification, no attachment.
+//   1. To the requester — branded HTML email with PDF attached and inline-CID
+//      logo in the signature.
+//   2. To Hayri — plain-text lead notification, no attachment.
 // The instant-download link on the page always works regardless of email outcome.
 import type { APIRoute } from 'astro';
 import { readFile } from 'node:fs/promises';
@@ -13,21 +14,107 @@ import { getSupabase } from '../../lib/supabase';
 export const prerender = false;
 
 const PDF_FILENAME = 'Laterna - Option Agreements.pdf';
+const LOGO_FILENAME = 'laterna-logo-full.png';
+const LOGO_CID = 'laterna-logo';
 
-// The PDF is bundled into the serverless function via includeFiles in
+// Assets are bundled into the serverless function via includeFiles in
 // astro.config.mjs. Vercel preserves the project-relative path inside the
-// function bundle, so we resolve it from process.cwd(). We try a couple of
+// function bundle, so we resolve from process.cwd(). We try a couple of
 // candidate locations in case the runtime cwd differs between environments.
-function resolvePdfPath(): string | null {
+function resolveBundledFile(relativeFromPublic: string): string | null {
   const candidates = [
-    path.join(process.cwd(), 'public', 'notes', PDF_FILENAME),
-    path.join(process.cwd(), '.vercel', 'output', 'static', 'notes', PDF_FILENAME),
-    path.join('/var/task', 'public', 'notes', PDF_FILENAME),
+    path.join(process.cwd(), 'public', relativeFromPublic),
+    path.join(process.cwd(), '.vercel', 'output', 'static', relativeFromPublic),
+    path.join('/var/task', 'public', relativeFromPublic),
   ];
   for (const p of candidates) {
     if (existsSync(p)) return p;
   }
   return null;
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function renderRequesterEmail(firstName: string): { html: string; text: string } {
+  const safeFirst = escapeHtml(firstName);
+
+  // Plain-text fallback for clients that don't render HTML.
+  const text = [
+    `Hi ${firstName},`,
+    '',
+    'As promised, here is the short reference note on how option agreements work.',
+    'It covers what an option agreement actually commits you to, what it does not,',
+    'typical timelines, the kinds of questions worth asking, and where things can',
+    'go wrong.',
+    '',
+    'Read it in your own time. If anything is unclear, or you want to talk through',
+    'how it might apply to your own land, the direct line is +44 7471 127212 —',
+    'weekdays, 09:00–18:00. You can also reply to this email.',
+    '',
+    'Best,',
+    '',
+    'Hayri Demirçapa',
+    'Founder & Architect, Laterna+Partners',
+    '+44 7471 127212 · laterna.partners',
+  ].join('\n');
+
+  // HTML body. Inline styles only — email clients strip <style> tags
+  // inconsistently. Table-based outer layout for Outlook safety; the
+  // signature uses a <table> so border-top renders cleanly everywhere.
+  // Colours match the site tokens (ink #4A4A4A, accent #92C1E9, mute #888).
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The note on option agreements</title>
+</head>
+<body style="margin:0;padding:0;background:#FFFFFF;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FFFFFF;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+          <tr>
+            <td style="padding:0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#4A4A4A;font-size:16px;line-height:1.65;">
+              <p style="margin:0 0 20px;">Hi ${safeFirst},</p>
+              <p style="margin:0 0 20px;">As promised, here is the short reference note on how option agreements work. It covers what an option agreement actually commits you to, what it does not, typical timelines, the kinds of questions worth asking, and where things can go wrong.</p>
+              <p style="margin:0 0 20px;">Read it in your own time. If anything is unclear, or you want to talk through how it might apply to your own land, the direct line is <a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:underline;">+44 7471 127212</a> &mdash; weekdays, 09:00&ndash;18:00. You can also reply to this email.</p>
+              <p style="margin:0;">Best,</p>
+
+              <!-- Signature -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:36px;">
+                <tr>
+                  <td style="padding-top:24px;border-top:1px solid #92C1E9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+                    <p style="margin:0;font-size:16px;color:#2A2A2A;font-weight:500;letter-spacing:-0.005em;">Hayri Demirçapa</p>
+                    <p style="margin:6px 0 0;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.18em;font-weight:600;">Founder &amp; Architect, Laterna+Partners</p>
+                    <p style="margin:16px 0 0;font-size:14px;color:#4A4A4A;line-height:1.6;">
+                      <a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:none;">+44 7471 127212</a>
+                      <span style="color:#BBBBBB;padding:0 8px;">&middot;</span>
+                      <a href="https://laterna.partners" style="color:#4A4A4A;text-decoration:none;">laterna.partners</a>
+                    </p>
+                    <p style="margin:24px 0 0;">
+                      <img src="cid:${LOGO_CID}" alt="Laterna+Partners" width="160" style="display:block;width:160px;height:auto;border:0;outline:none;text-decoration:none;">
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  return { html, text };
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -64,45 +151,40 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const resend = getResend();
 
-  // ---- Email 1: PDF to the requester (best-effort) ------------------------
-  // Read the bundled PDF from disk (see includeFiles in astro.config.mjs).
+  // ---- Email 1: PDF + branded signature to the requester (best-effort) ----
   if (resend) {
     try {
-      const pdfPath = resolvePdfPath();
-      if (!pdfPath) {
-        throw new Error(`PDF not found. cwd=${process.cwd()}`);
-      }
-      console.log('[note-signup] using PDF at', pdfPath);
-      const pdfBuffer = await readFile(pdfPath);
+      const pdfPath = resolveBundledFile(`notes/${PDF_FILENAME}`);
+      const logoPath = resolveBundledFile(`assets/${LOGO_FILENAME}`);
+      if (!pdfPath) throw new Error(`PDF not found. cwd=${process.cwd()}`);
+      if (!logoPath) throw new Error(`Logo not found. cwd=${process.cwd()}`);
+      console.log('[note-signup] using PDF at', pdfPath, '| logo at', logoPath);
+
+      const [pdfBuffer, logoBuffer] = await Promise.all([
+        readFile(pdfPath),
+        readFile(logoPath),
+      ]);
 
       const firstName = name.split(/\s+/)[0];
-      const requesterSubject = 'The note on option agreements';
-      const requesterBody = [
-        `Hi ${firstName},`,
-        '',
-        'As promised, here is the short reference note on how option agreements work.',
-        'It covers what an option agreement actually commits you to, what it does not,',
-        'typical timelines, the kinds of questions worth asking, and where things can go wrong.',
-        '',
-        'Read it in your own time. If anything is unclear, or you want to talk through',
-        'how it might apply to your own land, the direct line is +44 7471 127212 —',
-        'weekdays, 09:00–18:00. You can also reply to this email.',
-        '',
-        'Best,',
-        'Hayri Demirçapa',
-        'Founder & Architect, Laterna+Partners',
-      ].join('\n');
+      const { html, text } = renderRequesterEmail(firstName);
 
       await resend.emails.send({
         from: FROM_EMAIL,
         to: email,
         replyTo: NOTIFY_EMAIL,
-        subject: requesterSubject,
-        text: requesterBody,
+        subject: 'The note on option agreements',
+        html,
+        text,
         attachments: [
           {
             filename: PDF_FILENAME,
             content: pdfBuffer,
+          },
+          {
+            filename: LOGO_FILENAME,
+            content: logoBuffer,
+            contentType: 'image/png',
+            inlineContentId: LOGO_CID,
           },
         ],
       });
