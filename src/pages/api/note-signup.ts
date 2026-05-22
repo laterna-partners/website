@@ -4,13 +4,31 @@
 //   2. To Hayri — lead notification, no attachment.
 // The instant-download link on the page always works regardless of email outcome.
 import type { APIRoute } from 'astro';
+import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { getResend, NOTIFY_EMAIL, FROM_EMAIL } from '../../lib/resend';
 import { getSupabase } from '../../lib/supabase';
 
 export const prerender = false;
 
-const PDF_PATH = '/notes/Laterna%20-%20Option%20Agreements.pdf';
 const PDF_FILENAME = 'Laterna - Option Agreements.pdf';
+
+// The PDF is bundled into the serverless function via includeFiles in
+// astro.config.mjs. Vercel preserves the project-relative path inside the
+// function bundle, so we resolve it from process.cwd(). We try a couple of
+// candidate locations in case the runtime cwd differs between environments.
+function resolvePdfPath(): string | null {
+  const candidates = [
+    path.join(process.cwd(), 'public', 'notes', PDF_FILENAME),
+    path.join(process.cwd(), '.vercel', 'output', 'static', 'notes', PDF_FILENAME),
+    path.join('/var/task', 'public', 'notes', PDF_FILENAME),
+  ];
+  for (const p of candidates) {
+    if (existsSync(p)) return p;
+  }
+  return null;
+}
 
 export const POST: APIRoute = async ({ request, locals }) => {
   let form: FormData;
@@ -47,16 +65,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const resend = getResend();
 
   // ---- Email 1: PDF to the requester (best-effort) ------------------------
-  // Fetch the PDF from our own static layer rather than touching the disk —
-  // public/ files aren't bundled into the serverless function on Vercel.
+  // Read the bundled PDF from disk (see includeFiles in astro.config.mjs).
   if (resend) {
     try {
-      const pdfUrl = new URL(PDF_PATH, request.url).toString();
-      const pdfRes = await fetch(pdfUrl);
-      if (!pdfRes.ok) {
-        throw new Error(`PDF fetch failed: ${pdfRes.status}`);
+      const pdfPath = resolvePdfPath();
+      if (!pdfPath) {
+        throw new Error(`PDF not found. cwd=${process.cwd()}`);
       }
-      const pdfBuffer = Buffer.from(await pdfRes.arrayBuffer());
+      console.log('[note-signup] using PDF at', pdfPath);
+      const pdfBuffer = await readFile(pdfPath);
 
       const firstName = name.split(/\s+/)[0];
       const requesterSubject = 'The note on option agreements';

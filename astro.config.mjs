@@ -7,6 +7,10 @@ export default defineConfig({
   adapter: vercel({
     webAnalytics: { enabled: false },
     imageService: false,
+    // Ship the option-agreement PDF inside the serverless function bundle so
+    // /api/note-signup can fs.readFile it instead of fetching over HTTP
+    // (which hits deployment protection and adds cold-start latency).
+    includeFiles: ['./public/notes/Laterna - Option Agreements.pdf'],
   }),
   site: 'https://laterna.partners',
   // Astro 5 enables checkOrigin by default in SSR mode and rejects form POSTs
