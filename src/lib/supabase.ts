@@ -10,8 +10,11 @@ let _client: SupabaseClient | null | undefined;
 export function getSupabase(): SupabaseClient | null {
   if (_client !== undefined) return _client;
 
-  const url = import.meta.env.SUPABASE_URL;
-  const key = import.meta.env.SUPABASE_KEY;
+  // Use process.env not import.meta.env: Astro/Vite only exposes env vars
+  // prefixed with PUBLIC_ via import.meta.env, while plain server-side env vars
+  // (set in Vercel project settings) are available at runtime via process.env.
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_KEY;
 
   if (!url || !key) {
     console.warn('[supabase] env not configured; skipping persistence');
