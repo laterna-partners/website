@@ -20,4 +20,4 @@ export function getResend(): Resend | null {
 }
 
 export const NOTIFY_EMAIL = import.meta.env.NOTIFY_EMAIL ?? 'hayri@laterna.partners';
-export const FROM_EMAIL = import.meta.env.FROM_EMAIL ?? 'Laterna+Partners <onboarding@resend.dev>';
+export const FROM_EMAIL = import.meta.env.FROM_EMAIL ?? 'Hayri Demirçapa <hayri@laterna.partners>';
