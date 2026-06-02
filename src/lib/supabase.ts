@@ -1,7 +1,8 @@
-// Supabase client — server-side, uses service_role key for inserts.
-// Logs QR scans and form submissions. Optional: returns null if env not set yet
-// so the site still works during early local dev before the Laterna Supabase
-// project exists.
+// Supabase client. Server-side, uses the publishable (anon) key. RLS policies
+// on the target tables allow anon INSERT only (no SELECT/UPDATE/DELETE), so the
+// key is safe to ship even if it leaks. Reading the rows is done via the
+// Supabase dashboard with Hayri's auth.
+// Returns null if env not set, so the site still works during local dev.
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 let _client: SupabaseClient | null | undefined;
@@ -9,11 +10,11 @@ let _client: SupabaseClient | null | undefined;
 export function getSupabase(): SupabaseClient | null {
   if (_client !== undefined) return _client;
 
-  const url = import.meta.env.PUBLIC_SUPABASE_URL;
-  const key = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
+  const url = import.meta.env.SUPABASE_URL;
+  const key = import.meta.env.SUPABASE_KEY;
 
   if (!url || !key) {
-    console.warn('[supabase] env not configured — skipping persistence');
+    console.warn('[supabase] env not configured; skipping persistence');
     _client = null;
     return null;
   }
