@@ -1,7 +1,8 @@
 // POST /api/note-signup: handles the take-home-note form.
 // Two emails go out (best-effort, both are non-blocking):
-//   1. To the requester: branded HTML email with PDF attached and inline-CID
-//      logo in the signature.
+//   1. To the requester: PDF attachment + branded HTML body rendered from a
+//      Resend template (id below). Edit body/subject/preview text in the
+//      Resend dashboard, no code change needed.
 //   2. To Hayri: plain-text lead notification, no attachment.
 // The instant-download link on the page always works regardless of email outcome.
 import type { APIRoute } from 'astro';
@@ -14,10 +15,14 @@ import { getSupabase } from '../../lib/supabase';
 export const prerender = false;
 
 const PDF_FILENAME = 'Laterna - Option Agreements.pdf';
-const LOGO_FILENAME = 'laterna-logo-full.png';
-const LOGO_CID = 'laterna-logo';
 
-// Assets are bundled into the serverless function via includeFiles in
+// Resend template that owns the requester email body. Subject, From, Reply-To,
+// HTML, and preview text all live in the template; we only pass the PDF
+// attachment and variables at send time.
+// Dashboard: https://resend.com/templates/a0f51d6a-b890-489e-ad4c-f00c09cabdb9
+const REQUESTER_TEMPLATE_ID = 'a0f51d6a-b890-489e-ad4c-f00c09cabdb9';
+
+// The PDF is bundled into the serverless function via includeFiles in
 // astro.config.mjs. Vercel preserves the project-relative path inside the
 // function bundle, so we resolve from process.cwd(). We try a couple of
 // candidate locations in case the runtime cwd differs between environments.
@@ -31,100 +36,6 @@ function resolveBundledFile(relativeFromPublic: string): string | null {
     if (existsSync(p)) return p;
   }
   return null;
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function renderRequesterEmail(firstName: string): { html: string; text: string } {
-  const safeFirst = escapeHtml(firstName);
-
-  // Plain-text fallback for clients that don't render HTML.
-  const text = [
-    `Hi ${firstName},`,
-    '',
-    'As promised, here is the short reference note on how option agreements work.',
-    'It covers what an option agreement actually commits you to, what it does not,',
-    'typical timelines, the kinds of questions worth asking, and where things can',
-    'go wrong.',
-    '',
-    'Read it in your own time. If anything is unclear, or you want to talk through',
-    'how it might apply to your own land, the direct line is +44 7471 127212,',
-    'weekdays 09:00–18:00. You can also reply to this email.',
-    '',
-    'Best,',
-    '',
-    'Hayri Demirçapa',
-    'Founder | Architect',
-    '',
-    't  +44 7471 127212',
-    '',
-    'laterna.partners',
-  ].join('\n');
-
-  // HTML body. Inline styles only; email clients strip <style> tags
-  // inconsistently. Table-based outer layout for Outlook safety; the
-  // signature uses a <table> so border-top renders cleanly everywhere.
-  // Colours match the site tokens (ink #4A4A4A, accent #92C1E9, mute #888).
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The note on option agreements</title>
-</head>
-<body style="margin:0;padding:0;background:#FFFFFF;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FFFFFF;">
-    <tr>
-      <td align="center" style="padding:32px 16px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
-          <tr>
-            <td style="padding:0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#4A4A4A;font-size:16px;line-height:1.65;">
-              <p style="margin:0 0 20px;">Hi ${safeFirst},</p>
-              <p style="margin:0 0 20px;">As promised, here is the short reference note on how option agreements work. It covers what an option agreement actually commits you to, what it does not, typical timelines, the kinds of questions worth asking, and where things can go wrong.</p>
-              <p style="margin:0 0 20px;">Read it in your own time. If anything is unclear, or you want to talk through how it might apply to your own land, the direct line is <a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:underline;">+44 7471 127212</a>, weekdays 09:00&ndash;18:00. You can also reply to this email.</p>
-              <p style="margin:0;">Best,</p>
-
-              <!-- Signature: vertical letterhead. One element per line,
-                   logo as the brand anchor in the middle, t: prefix
-                   following architecture-firm convention. No top rule so
-                   the logo carries the visual weight. -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:44px;">
-                <tr>
-                  <td style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
-                    <p style="margin:0;font-size:17px;color:#2A2A2A;font-weight:600;letter-spacing:-0.005em;line-height:1.3;">Hayri Demirçapa</p>
-                    <p style="margin:6px 0 0;font-size:14px;color:#888888;font-weight:400;line-height:1.5;">Founder&nbsp;&nbsp;|&nbsp;&nbsp;Architect</p>
-
-                    <p style="margin:20px 0;">
-                      <img src="cid:${LOGO_CID}" alt="Laterna+Partners" width="150" style="display:block;width:150px;height:auto;border:0;outline:none;text-decoration:none;">
-                    </p>
-
-                    <p style="margin:0;font-size:14px;color:#4A4A4A;line-height:1.6;">
-                      <span style="color:#AAAAAA;">t</span>&nbsp;&nbsp;<a href="tel:+447471127212" style="color:#4A4A4A;text-decoration:none;">+44 7471 127212</a>
-                    </p>
-
-                    <p style="margin:10px 0 0;font-size:14px;color:#4A4A4A;line-height:1.6;">
-                      <a href="https://laterna.partners/landowners" style="color:#4A4A4A;text-decoration:underline;">laterna.partners</a>
-                    </p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
-
-  return { html, text };
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -162,49 +73,34 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const resend = getResend();
 
   // ---- Email 1: PDF + branded signature to the requester (best-effort) ----
+  // Body comes from the Resend template; we attach the PDF inline at send time.
   if (resend) {
     try {
       const pdfPath = resolveBundledFile(`notes/${PDF_FILENAME}`);
-      const logoPath = resolveBundledFile(`assets/${LOGO_FILENAME}`);
       if (!pdfPath) throw new Error(`PDF not found. cwd=${process.cwd()}`);
-      if (!logoPath) throw new Error(`Logo not found. cwd=${process.cwd()}`);
-      console.log('[note-signup] using PDF at', pdfPath, '| logo at', logoPath);
-
-      const [pdfBuffer, logoBuffer] = await Promise.all([
-        readFile(pdfPath),
-        readFile(logoPath),
-      ]);
+      const pdfBuffer = await readFile(pdfPath);
 
       const firstName = name.split(/\s+/)[0];
-      const { html, text } = renderRequesterEmail(firstName);
 
+      // SDK v6 accepts `template: { id, variables }`. When set, the template
+      // provides subject, html, text, preview text. We still pass from/to/
+      // replyTo and attachments at send time.
+      // The 'as never' is because the SDK's send() type may not yet surface
+      // the template field publicly; the underlying API accepts it.
       await resend.emails.send({
         from: FROM_EMAIL,
         to: email,
         replyTo: NOTIFY_EMAIL,
-        subject: 'The note on option agreements',
-        html,
-        text,
+        template: { id: REQUESTER_TEMPLATE_ID, variables: { firstName } },
         attachments: [
           {
             filename: PDF_FILENAME,
             // Resend's REST API expects base64-encoded content as a string.
-            // A raw Buffer gets JSON-serialised to {type:'Buffer',data:[...]}
-            // which the API can't decode (attachment ends up corrupt or missing).
             content: pdfBuffer.toString('base64'),
             contentType: 'application/pdf',
           },
-          {
-            filename: LOGO_FILENAME,
-            content: logoBuffer.toString('base64'),
-            contentType: 'image/png',
-            // Resend v6 renamed inlineContentId -> contentId (API field
-            // content_id). Setting this flips the attachment to inline
-            // disposition so the cid:laterna-logo reference resolves.
-            contentId: LOGO_CID,
-          },
         ],
-      });
+      } as never);
     } catch (err) {
       // Don't fail the request. The instant-download link on the page still works.
       console.error('[note-signup] requester email failed', err);
