@@ -54,13 +54,16 @@ export function isAllowedOrigin(request: Request): boolean {
 // ---------------------------------------------------------------------------
 
 export function getClientIp(request: Request): string {
+  // x-real-ip is set by Vercel's own edge network and isn't client-controlled,
+  // so it's trusted first. x-forwarded-for can carry a chain the client
+  // supplied part of, so it's only a fallback.
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) return realIp.trim();
   const forwardedFor = request.headers.get('x-forwarded-for');
   if (forwardedFor) {
     const first = forwardedFor.split(',')[0]?.trim();
     if (first) return first;
   }
-  const realIp = request.headers.get('x-real-ip');
-  if (realIp) return realIp.trim();
   return 'unknown';
 }
 

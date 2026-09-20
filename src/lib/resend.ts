@@ -8,7 +8,8 @@ let _client: Resend | null | undefined;
 export function getResend(): Resend | null {
   if (_client !== undefined) return _client;
 
-  const key = import.meta.env.RESEND_API_KEY;
+  // Runtime env first (how it's actually set on Vercel), import.meta.env as a fallback for local dev.
+  const key = process.env.RESEND_API_KEY ?? import.meta.env.RESEND_API_KEY;
   if (!key) {
     console.warn('[resend] RESEND_API_KEY not set — emails will be logged only');
     _client = null;

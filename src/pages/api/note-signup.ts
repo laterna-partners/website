@@ -65,7 +65,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const phone = ((form.get('phone') as string) ?? '').trim();
 
   if (!rawName || !rawEmail) {
-    return new Response(JSON.stringify({ error: 'Name and email required' }), { status: 400 });
+    return jsonResponse(400, { ok: false, error: 'Name and email required' });
   }
 
   const name = validateName(rawName);

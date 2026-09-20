@@ -242,7 +242,16 @@ const { showForm = true } = Astro.props;
     opacity: 0;
   }
 
+  .turnstile-slot {
+    width: 100%;
+    min-width: 0;
+  }
   .turnstile-slot:empty { display: none; }
+  /* The "flexible" Turnstile size fills its container; keep the iframe from
+     ever forcing horizontal scroll on a narrow phone. Below roughly 300px
+     the widget itself may still clip slightly; that's a Cloudflare-side
+     minimum, not something worth fighting here. */
+  .turnstile-slot iframe { max-width: 100%; }
 
   .form-error {
     margin-top: 8px;
