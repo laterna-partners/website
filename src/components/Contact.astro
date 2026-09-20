@@ -103,18 +103,23 @@ const { showForm = true } = Astro.props;
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
   const errorMsg = document.getElementById('contact-error');
 
+  // Fetch the token as soon as the script runs (getFormToken is memoised to
+  // one request per page), so it is present whether or not the form is
+  // revealed via the toggle below.
+  fillFormToken(form);
+
   open?.addEventListener('click', () => {
     open.style.display = 'none';
     form?.removeAttribute('hidden');
-    // Widget lives inside a form that starts hidden, so it's rendered here,
-    // once the form (and its container) are actually visible.
-    fillFormToken(form);
+    // The Turnstile widget still waits for the form to actually be visible.
     renderTurnstile('turnstile-contact-widget', import.meta.env.PUBLIC_TURNSTILE_SITE_KEY);
   });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMsg?.setAttribute('hidden', '');
+    const tokenInput = form.querySelector<HTMLInputElement>('input[name="form_token"]');
+    if (tokenInput && !tokenInput.value) await fillFormToken(form);
     const data = new FormData(form);
     const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
     if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
@@ -204,6 +209,7 @@ const { showForm = true } = Astro.props;
     margin-top: 32px;
     max-width: 720px;
   }
+  .contact-form[hidden] { display: none; }
   .full-row { grid-column: 1 / -1; }
   .field-label { display: flex; flex-direction: column; gap: 10px; }
   .field-name {
