@@ -18,8 +18,9 @@ export default defineConfig({
   // whose Origin header doesn't match the request URL. Behind Vercel's proxy
   // this misfires on multipart POSTs and surfaces as
   // 'Cross-site POST form submissions are forbidden'. We only have two POST
-  // endpoints (contact + note-signup), both already protected by a honeypot
-  // and input validation. Turn off the auto-check.
+  // endpoints (contact + note-signup). Turn off the auto-check and do our own
+  // origin allowlisting, rate limiting, Turnstile and form-token checks in
+  // src/lib/form-guard.ts instead, which both routes call directly.
   security: {
     checkOrigin: false,
   },
