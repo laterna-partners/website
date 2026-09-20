@@ -11,6 +11,13 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { getResend, NOTIFY_EMAIL, FROM_EMAIL } from '../../lib/resend';
 import { getSupabase } from '../../lib/supabase';
+import {
+  runFormGuard,
+  validateName,
+  validateEmail,
+  buildDiagnosticsBlock,
+  jsonResponse,
+} from '../../lib/form-guard';
 
 export const prerender = false;
 
@@ -50,15 +57,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   }
 
-  const name = ((form.get('name') as string) ?? '').trim();
-  const email = ((form.get('email') as string) ?? '').trim();
+  const guard = await runFormGuard(request, form);
+  if (!guard.ok) return guard.response;
+
+  const rawName = ((form.get('name') as string) ?? '').trim();
+  const rawEmail = ((form.get('email') as string) ?? '').trim();
   const phone = ((form.get('phone') as string) ?? '').trim();
 
-  if (!name || !email) {
+  if (!rawName || !rawEmail) {
     return new Response(JSON.stringify({ error: 'Name and email required' }), { status: 400 });
   }
 
+  const name = validateName(rawName);
+  if (!name) return jsonResponse(400, { ok: false, error: 'invalid_name' });
+
+  const email = validateEmail(rawEmail);
+  if (!email) return jsonResponse(400, { ok: false, error: 'invalid_email' });
+
   const supabase = getSupabase();
+  let supabaseOk: boolean | null = null;
   if (supabase) {
     const { error } = await supabase.from('contact_submissions').insert({
       form_type: 'note-signup',
@@ -67,6 +84,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       phone: phone || null,
       arrival_ref: locals.ref ?? null,
     });
+    supabaseOk = !error;
     if (error) console.error('[note-signup] supabase insert failed', error.message);
   }
 
@@ -116,6 +134,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
     locals.ref && `Arrived via: ${locals.ref}`,
     '',
     'They requested the option-agreement explainer PDF.',
+    '',
+    buildDiagnosticsBlock({
+      request,
+      ip: guard.ip,
+      turnstileResult: guard.turnstileResult,
+      tokenAgeSeconds: guard.tokenAgeSeconds,
+      supabaseOk,
+    }),
   ].filter(Boolean).join('\n');
 
   if (resend) {

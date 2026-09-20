@@ -39,6 +39,11 @@ const { available = false } = Astro.props;
         <!-- honeypot for bots -->
         <input type="text" name="company" class="honeypot" tabindex="-1" autocomplete="off" />
         <input type="hidden" name="form_type" value="note-signup" />
+        <input type="hidden" name="form_token" value="" />
+
+        <div class="full-row">
+          <div id="turnstile-note-widget" class="turnstile-slot"></div>
+        </div>
 
         <div class="full-row submit-row">
           <button type="submit" class="lp-submit">
@@ -51,6 +56,11 @@ const { available = false } = Astro.props;
             Goes only to me. No mailing list, no sharing with third parties.
           </span>
         </div>
+
+        <p id="note-error" class="form-error full-row" hidden>
+          Sorry, that could not be sent. Please email
+          {' '}<a href="mailto:hayri@laterna.partners" class="lp-link">hayri@laterna.partners</a>.
+        </p>
       </form>
 
       <div id="note-sent" class="note-sent" hidden>
@@ -79,12 +89,19 @@ const { available = false } = Astro.props;
 </Section>
 
 <script>
+  import { fillFormToken, renderTurnstile, resetTurnstile } from '../lib/form-client';
+
   const form = document.getElementById('note-form') as HTMLFormElement | null;
   const sent = document.getElementById('note-sent');
   const reset = document.getElementById('note-reset');
+  const errorMsg = document.getElementById('note-error');
+
+  fillFormToken(form);
+  renderTurnstile('turnstile-note-widget', import.meta.env.PUBLIC_TURNSTILE_SITE_KEY);
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    errorMsg?.setAttribute('hidden', '');
     const data = new FormData(form);
     const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
     if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
@@ -96,7 +113,8 @@ const { available = false } = Astro.props;
       sent?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (_err) {
       if (btn) { btn.disabled = false; btn.textContent = 'Try again'; }
-      alert('Sorry — something went wrong. Please try again, or email hayri@laterna.partners.');
+      errorMsg?.removeAttribute('hidden');
+      resetTurnstile('turnstile-note-widget');
     }
   });
 
@@ -106,6 +124,7 @@ const { available = false } = Astro.props;
     const btn = form?.querySelector('button[type=submit]') as HTMLButtonElement;
     if (btn) { btn.disabled = false; }
     form?.reset();
+    fillFormToken(form);
   });
 </script>
 
@@ -172,6 +191,15 @@ const { available = false } = Astro.props;
     width: 1px;
     height: 1px;
     opacity: 0;
+  }
+
+  .turnstile-slot:empty { display: none; }
+
+  .form-error {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--lp-ink-display);
   }
 
   .submit-row {

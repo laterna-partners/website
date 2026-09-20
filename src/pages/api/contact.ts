@@ -5,6 +5,13 @@
 import type { APIRoute } from 'astro';
 import { getResend, NOTIFY_EMAIL, FROM_EMAIL } from '../../lib/resend';
 import { getSupabase } from '../../lib/supabase';
+import {
+  runFormGuard,
+  validateName,
+  validateContact,
+  buildDiagnosticsBlock,
+  jsonResponse,
+} from '../../lib/form-guard';
 
 export const prerender = false;
 
@@ -21,17 +28,28 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   }
 
-  const name = ((form.get('name') as string) ?? '').trim();
-  const contact = ((form.get('contact') as string) ?? '').trim();
+  const guard = await runFormGuard(request, form);
+  if (!guard.ok) return guard.response;
+
+  const rawName = ((form.get('name') as string) ?? '').trim();
+  const rawContact = ((form.get('contact') as string) ?? '').trim();
   const site = ((form.get('site') as string) ?? '').trim();
   const message = ((form.get('message') as string) ?? '').trim();
 
-  if (!name || !contact) {
+  if (!rawName || !rawContact) {
     return new Response(JSON.stringify({ error: 'Name and contact required' }), { status: 400 });
   }
 
+  const name = validateName(rawName);
+  if (!name) return jsonResponse(400, { ok: false, error: 'invalid_name' });
+
+  const contactCheck = validateContact(rawContact);
+  if (!contactCheck) return jsonResponse(400, { ok: false, error: 'invalid_contact' });
+  const contact = contactCheck.value;
+
   // Best-effort persist
   const supabase = getSupabase();
+  let supabaseOk: boolean | null = null;
   if (supabase) {
     const { error } = await supabase.from('contact_submissions').insert({
       form_type: 'contact',
@@ -41,6 +59,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       message: message || null,
       arrival_ref: locals.ref ?? null,
     });
+    supabaseOk = !error;
     if (error) console.error('[contact] supabase insert failed', error.message);
   }
 
@@ -54,6 +73,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
     locals.ref && `Arrived via: ${locals.ref}`,
     '',
     message ? `Message:\n${message}` : '(no message)',
+    '',
+    buildDiagnosticsBlock({
+      request,
+      ip: guard.ip,
+      turnstileResult: guard.turnstileResult,
+      tokenAgeSeconds: guard.tokenAgeSeconds,
+      supabaseOk,
+    }),
   ].filter(Boolean).join('\n');
 
   if (resend) {
@@ -61,7 +88,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       await resend.emails.send({
         from: FROM_EMAIL,
         to: NOTIFY_EMAIL,
-        replyTo: contact.includes('@') ? contact : undefined,
+        replyTo: contactCheck.type === 'email' ? contact : undefined,
         subject,
         text: body,
       });

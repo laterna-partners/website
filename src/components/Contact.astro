@@ -64,6 +64,11 @@ const { showForm = true } = Astro.props;
                 <!-- honeypot -->
                 <input type="text" name="company" class="honeypot" tabindex="-1" autocomplete="off" />
                 <input type="hidden" name="form_type" value="contact" />
+                <input type="hidden" name="form_token" value="" />
+
+                <div class="full-row">
+                  <div id="turnstile-contact-widget" class="turnstile-slot"></div>
+                </div>
 
                 <div class="full-row submit-row">
                   <button type="submit" class="lp-submit">Send</button>
@@ -71,6 +76,11 @@ const { showForm = true } = Astro.props;
                     Goes only to me. No mailing list, no sharing, no tracking.
                   </span>
                 </div>
+
+                <p id="contact-error" class="form-error full-row" hidden>
+                  Sorry, that could not be sent. Please email
+                  {' '}<a href="mailto:hayri@laterna.partners" class="lp-link">hayri@laterna.partners</a>.
+                </p>
               </form>
             </div>
           </div>
@@ -87,26 +97,35 @@ const { showForm = true } = Astro.props;
 </Section>
 
 <script>
+  import { fillFormToken, renderTurnstile, resetTurnstile } from '../lib/form-client';
+
   const open = document.getElementById('contact-form-open');
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const errorMsg = document.getElementById('contact-error');
 
   open?.addEventListener('click', () => {
     open.style.display = 'none';
     form?.removeAttribute('hidden');
+    // Widget lives inside a form that starts hidden, so it's rendered here,
+    // once the form (and its container) are actually visible.
+    fillFormToken(form);
+    renderTurnstile('turnstile-contact-widget', import.meta.env.PUBLIC_TURNSTILE_SITE_KEY);
   });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    errorMsg?.setAttribute('hidden', '');
     const data = new FormData(form);
     const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
     if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
     try {
       const res = await fetch('/api/contact', { method: 'POST', body: data });
       if (!res.ok) throw new Error('Failed');
-      form.innerHTML = '<p class="contact-sent">Sent — thank you. I will be in touch within a working day.</p>';
+      form.innerHTML = '<p class="contact-sent">Sent, thank you. I will be in touch within a working day.</p>';
     } catch (_err) {
       if (btn) { btn.disabled = false; btn.textContent = 'Try again'; }
-      alert('Sorry — something went wrong. Please try again, or email hayri@laterna.partners.');
+      errorMsg?.removeAttribute('hidden');
+      resetTurnstile('turnstile-contact-widget');
     }
   });
 </script>
@@ -221,6 +240,15 @@ const { showForm = true } = Astro.props;
     width: 1px;
     height: 1px;
     opacity: 0;
+  }
+
+  .turnstile-slot:empty { display: none; }
+
+  .form-error {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--lp-ink-display);
   }
 
   .submit-row {
