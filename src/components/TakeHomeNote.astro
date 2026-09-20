@@ -95,6 +95,8 @@ const { available = false } = Astro.props;
   const sent = document.getElementById('note-sent');
   const reset = document.getElementById('note-reset');
   const errorMsg = document.getElementById('note-error');
+  const submitBtn = form?.querySelector('button[type=submit]') as HTMLButtonElement | null;
+  const submitLabel = submitBtn?.textContent ?? '';
 
   fillFormToken(form);
   renderTurnstile('turnstile-note-widget', import.meta.env.PUBLIC_TURNSTILE_SITE_KEY);
@@ -102,12 +104,15 @@ const { available = false } = Astro.props;
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMsg?.setAttribute('hidden', '');
+    const tokenInput = form.querySelector<HTMLInputElement>('input[name="form_token"]');
+    if (tokenInput && !tokenInput.value) await fillFormToken(form);
     const data = new FormData(form);
     const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
     if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
     try {
       const res = await fetch('/api/note-signup', { method: 'POST', body: data });
       if (!res.ok) throw new Error('Failed');
+      if (btn) { btn.disabled = false; btn.textContent = submitLabel; }
       form.hidden = true;
       sent?.removeAttribute('hidden');
       sent?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -121,8 +126,7 @@ const { available = false } = Astro.props;
   reset?.addEventListener('click', () => {
     sent?.setAttribute('hidden', '');
     form?.removeAttribute('hidden');
-    const btn = form?.querySelector('button[type=submit]') as HTMLButtonElement;
-    if (btn) { btn.disabled = false; }
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitLabel; }
     form?.reset();
     fillFormToken(form);
     // The previous Turnstile token was already used on the successful submit
@@ -159,6 +163,7 @@ const { available = false } = Astro.props;
     gap: 28px 40px;
     max-width: 720px;
   }
+  .note-form[hidden] { display: none; }
   .full-row { grid-column: 1 / -1; }
   .field-label { display: flex; flex-direction: column; gap: 10px; }
   .field-name {
