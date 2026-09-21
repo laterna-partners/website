@@ -62,12 +62,28 @@ function resolveBundledNotePdf(): string | null {
   return null;
 }
 
+// Public origin of the site for links that leave the page (the download link
+// in the email and on the success panel). Behind Vercel's proxy request.url
+// reports the internal host (it produced https://localhost/... in
+// production), so prefer the forwarded host header, then the canonical site
+// from astro.config.mjs, and fall back to the request only in local dev.
+export function publicOrigin(request: Request): string {
+  const forwardedHost = request.headers.get('x-forwarded-host') ?? request.headers.get('host');
+  const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https';
+  if (forwardedHost && !/^(localhost|127\.0\.0\.1)(:\d+)?$/i.test(forwardedHost)) {
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+  const site = import.meta.env.SITE;
+  if (site && !/localhost/i.test(site)) return site.replace(/\/$/, '');
+  return new URL(request.url).origin;
+}
+
 // Builds the seven-day signed link to GET /api/note/[token] for the given
-// email, resolved against the current request so it works the same in local
-// dev, preview and production.
+// email, on the public origin so it works the same in local dev, preview and
+// production.
 export function buildNoteDownloadUrl(email: string, request: Request): string {
   const token = issueDownloadToken(email);
-  return new URL(`/api/note/${token}`, request.url).toString();
+  return `${publicOrigin(request)}/api/note/${token}`;
 }
 
 export interface SendNoteEmailInput {
