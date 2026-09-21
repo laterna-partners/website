@@ -1,88 +1,273 @@
 ---
-import Section from './Section.astro';
-import Marginalia from './Marginalia.astro';
-
-const HOW_STEPS = [
+// How it works: five rows, each with its sketch, its sentence, and the two
+// things a landowner actually wants to know (how long, what it costs).
+const STEPS = [
   {
-    eyebrow: 'One',
-    title: 'I explore the planning potential.',
-    body: 'I take on the time and cost of working out whether planning permission could realistically be obtained on your site. You don’t pay for any of this work, and there is no commitment from you while it happens.',
+    title: 'A conversation',
+    body: 'We talk on the phone or on WhatsApp about your site and what you would like to understand.',
+    time: '10 to 20 minutes.',
+    cost: 'Nothing. It is just a conversation.',
+    sketch: 'step-1-conversation',
+    alt: 'A hand holding a telephone in conversation, an open letter beside it.',
+    width: 958,
+    height: 718,
   },
   {
-    eyebrow: 'Two',
-    title: 'I make you an offer, agreed upfront.',
-    body: 'If planning looks achievable, I make you an offer; a fixed price I would pay to buy the site, agreed in writing before anything else happens. For some sites that number is higher than what the land would fetch today; for others it is broadly in line. Either way you see it before signing, and you are free to say no.',
+    title: 'Appraisal and visit',
+    body: 'I research the planning history and local policy for your site, then visit in person if it looks promising.',
+    time: '2 to 4 weeks.',
+    cost: 'Nothing. I cover my own time and travel.',
+    sketch: 'step-2-appraisal',
+    alt: 'The site pinned within its street and neighbourhood, seen from above.',
+    width: 952,
+    height: 714,
   },
   {
-    eyebrow: 'Three',
-    title: 'If it doesn’t work, you’ve lost nothing.',
-    body: 'If planning isn’t going to work, the arrangement simply falls away. No fees, no obligations, and the land remains entirely yours, unchanged.',
+    title: 'Offer and agreement',
+    body: 'I put a fixed price to you in writing, and solicitors draw up the option agreement between us: a right to buy later, at the price fixed now.',
+    time: '4 to 8 weeks.',
+    cost: 'Nothing, including your own solicitor’s reasonable fees, which I pay.',
+    sketch: 'step-3-offer',
+    alt: 'An architect’s desk with a model, drawings and a pen resting on a signed sheet.',
+    width: 958,
+    height: 718,
+  },
+  {
+    title: 'Planning',
+    body: 'I submit and manage the planning application. The cost of it is carried on my side.',
+    time: '12 to 24 months.',
+    cost: 'Nothing. The planning costs are never yours.',
+    sketch: 'step-4-planning',
+    alt: 'The site read in layers, from boundary to buildings above.',
+    width: 954,
+    height: 716,
+  },
+  {
+    title: 'Completion or lapse',
+    body: 'If consent is granted, I buy the land at the agreed price. If it is refused, the option lapses.',
+    time: '4 to 8 weeks after the decision.',
+    cost: 'Nothing, whichever way it goes.',
+    sketch: 'step-5-completion',
+    alt: 'Three finished homes shown beside their plans.',
+    width: 814,
+    height: 610,
   },
 ];
 ---
-<Section id="how">
-  <Marginalia label="How it works" sub="Three steps, in plain English.">
-    <div class="how-wrap">
-      <h2 class="how-head">I cover the work. You keep the land. You decide.</h2>
+<section id="how" class="lp-section">
+  <div class="lp-shell">
+    <div class="how-body">
+      <div class="how-rail">
+        <p class="lp-eyebrow">How it works</p>
+      </div>
 
-      <div class="how-grid">
-        {HOW_STEPS.map((step) => (
-          <div class="how-step">
-            <div class="how-eyebrow">{step.eyebrow}</div>
-            <h3 class="how-title">{step.title}</h3>
-            <p class="how-body">{step.body}</p>
-          </div>
-        ))}
+      <div class="how-main">
+        <h2 class="lp-h2 how-head">Five steps.</h2>
+
+        <ol class="how-list" data-reveal-group>
+          {STEPS.map((step, index) => (
+            <li class="how-step" data-reveal>
+              <div class="how-art">
+                <img
+                  class="lp-sketch"
+                  src={`/assets/sketches/${step.sketch}.webp`}
+                  alt={step.alt}
+                  width={step.width}
+                  height={step.height}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+
+              <div class="how-text">
+                <p class="how-number"><span class="how-number-word">Step </span>{index + 1}</p>
+                <h3 class="how-title">{step.title}</h3>
+                <p class="how-sentence">{step.body}</p>
+              </div>
+
+              <dl class="how-facts">
+                <div class="how-fact">
+                  <dt>Typical time</dt>
+                  <dd>{step.time}</dd>
+                </div>
+                <div class="how-fact">
+                  <dt>What it costs you</dt>
+                  <dd>{step.cost}</dd>
+                </div>
+              </dl>
+            </li>
+          ))}
+        </ol>
+
+        <div class="how-close">
+          <p>
+            If I do not think your site is suitable, I will tell you honestly, rather than string
+            things along.
+          </p>
+          <p>
+            Planning takes 12 to 24 months. Nothing is asked of you in that time, and you use the
+            land exactly as you do now.
+          </p>
+          <p class="lp-h3 how-signature">I cover the work. You keep the land. You decide.</p>
+        </div>
       </div>
     </div>
-  </Marginalia>
-</Section>
+  </div>
+</section>
 
 <style>
-  .how-wrap { max-width: 52rem; }
+  .how-body {
+    padding: 64px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .how-main {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
   .how-head {
-    font-size: clamp(28px, 4vw, 44px);
-    line-height: 1.15;
+    margin: 0;
+    font-size: clamp(28px, 3.4vw, 44px);
     font-weight: 300;
+    line-height: 1.15;
     letter-spacing: -0.01em;
     color: var(--lp-ink-display);
-    margin: 0 0 48px;
-    max-width: 20ch;
     text-wrap: balance;
   }
-  .how-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+  .how-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
     gap: 48px;
   }
+
+  /* Mobile: sketch on top, a hairline under it, then the words. */
   .how-step {
-    border-top: 1px solid var(--lp-rule);
-    padding-top: 24px;
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
-  .how-eyebrow {
-    font-size: 11px;
+  .how-art {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--lp-rule);
+  }
+  .how-art img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .how-text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .how-number {
+    margin: 0;
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.18em;
-    color: var(--lp-accent);
-    text-transform: uppercase;
-    margin-right: -0.18em;
+    letter-spacing: 0.12em;
+    color: var(--lp-mute-text);
+    font-variant-numeric: tabular-nums;
   }
   .how-title {
-    font-size: 22px;
-    line-height: 1.25;
-    font-weight: 400;
-    color: var(--lp-ink-display);
     margin: 0;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--lp-ink-display);
+  }
+  .how-sentence {
+    margin: 0;
+    max-width: 46ch;
+  }
+
+  .how-facts {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .how-fact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .how-fact dt {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--lp-ink-display);
+  }
+  .how-fact dd {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--lp-mute-text);
+  }
+
+  .how-close {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 62ch;
+  }
+  .how-close p {
+    margin: 0;
+  }
+  .how-signature {
+    margin: 8px 0 0;
+    font-weight: 300;
+    color: var(--lp-ink-display);
     text-wrap: balance;
   }
-  .how-body {
-    font-size: 16px;
-    line-height: 1.7;
-    color: var(--lp-ink);
-    margin: 0;
-    text-wrap: pretty;
+
+  @media (min-width: 720px) {
+    .how-body {
+      padding: 96px 0;
+    }
+  }
+
+  /* Desktop: one full-width row per step. */
+  @media (min-width: 1024px) {
+    .how-body {
+      padding: 128px 0;
+      display: grid;
+      grid-template-columns: 200px minmax(0, 1fr);
+      column-gap: 32px;
+      align-items: start;
+    }
+    .how-main {
+      gap: 64px;
+    }
+    .how-list {
+      gap: 0;
+    }
+    .how-step {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr) 260px;
+      column-gap: 32px;
+      align-items: start;
+      padding: 32px 0;
+      border-top: 1px solid var(--lp-rule);
+    }
+    .how-step:last-child {
+      border-bottom: 1px solid var(--lp-rule);
+    }
+    .how-art {
+      width: 240px;
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+    .how-number-word {
+      display: none;
+    }
   }
 </style>

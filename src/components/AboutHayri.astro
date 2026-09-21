@@ -1,113 +1,126 @@
 ---
-import Section from './Section.astro';
-import Marginalia from './Marginalia.astro';
-interface Props { showPortrait?: boolean; }
-const { showPortrait = true } = Astro.props;
+// About: the person writing to you. The portrait is floated so the opening
+// paragraph wraps around it at both breakpoints, as in the V2 artboards.
 ---
-<Section id="about" style="padding-top: 96px; padding-bottom: 96px;">
-  <Marginalia label="About" sub="The practice.">
-    <div class:list={['about-grid', showPortrait && 'with-portrait']}>
-      {showPortrait && (
-        <figure class="portrait">
+<section id="about" class="about">
+  <div class="lp-shell">
+    <div class="sec-grid">
+      <div class="sec-rail">
+        <p class="lp-eyebrow">About</p>
+      </div>
+
+      <div class="sec-body">
+        <div class="about-copy" data-reveal>
           <img
+            class="portrait"
             src="/assets/hayri-portrait.jpg"
-            alt="Hayri Demirçapa, founder of Laterna+Partners"
-            width="280"
-            height="350"
+            alt="Hayri Demirçapa, founder and architect of Laterna+Partners."
+            width="240"
+            height="300"
             loading="lazy"
           />
-          <figcaption>Hayri Demirçapa · London, 2026</figcaption>
+
+          <h2 class="lp-h2 about-name">Hayri Demirçapa</h2>
+          <p class="about-role">Founder &amp; Architect</p>
+
+          <p class="about-p">
+            I am an architect by training, based in South West London. Most developers look at
+            land and see what could be quickly built and sold. I tend to look at it the way an
+            architect does: what could be designed there, who it could serve, what the right
+            thing for this piece of ground might be.
+          </p>
+          <p class="about-p">
+            I trained and qualified as an architect in Istanbul. In London I went on to manage
+            the whole design process of residential projects worth £40m to £100m, which is where
+            I learned to read a site properly before deciding what to do with it.
+          </p>
+          <p class="about-p">
+            An application that respects its surroundings tends to get through the council's
+            planning committee more easily than one that does not. For you, that matters
+            directly. Planning permission is what turns my offer into money in your hands, not a
+            promise on paper.
+          </p>
+          <p class="about-p">
+            I keep the practice small on purpose. Every letter, every appraisal and every
+            conversation runs through me, not a call centre or a case handler. The cost of the
+            planning work is carried on my side, never yours.
+          </p>
+
+        </div>
+
+        <figure class="about-sketch" data-reveal>
+          <img
+            class="lp-sketch"
+            src="/assets/sketches/about-house-garden.webp"
+            width="1400"
+            height="933"
+            alt="A house and its long garden seen from above, with a new single-storey home at the far end picked out in blue, and two small plans showing the garden before and after."
+            loading="lazy"
+          />
+          <figcaption class="lp-caption">
+            A house, its garden, and the home that could be designed at the end of it. Illustrative.
+          </figcaption>
         </figure>
-      )}
-
-      <div class="about-body">
-        <div class="about-name">Hayri Demirçapa</div>
-        <div class="about-role">Founder &amp; Architect</div>
-
-        <p>
-          I am an architect by training, based in London. Most developers look at land and see what
-          could be quickly built and sold. I tend to look at it the way an architect does; what
-          could be designed there, who it could serve, what the right thing to do with this piece
-          of ground might be.
-        </p>
-        <p>
-          Laterna+Partners is small and considered on purpose. I work on a small number of sites
-          a year, and I am not interested in being on every plot in the country. If we end up
-          working together, you have my full attention.
-        </p>
-        <p class="about-fine">
-          Every enquiry is treated in strict confidence. No mailing lists. No sharing of
-          details with third parties.
-        </p>
       </div>
     </div>
-  </Marginalia>
-</Section>
+  </div>
+</section>
 
 <style>
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 48px;
-    align-items: start;
-  }
-  .about-grid.with-portrait {
-    grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
-  }
-  @media (max-width: 720px) {
-    .about-grid.with-portrait { grid-template-columns: 1fr; }
+  .about {
+    padding: 64px 0;
+    border-top: 1px solid var(--lp-rule);
   }
 
-  .portrait { margin: 0; display: flex; flex-direction: column; gap: 12px; }
-  .portrait img {
-    display: block;
-    width: 100%;
-    max-width: 280px;
-    height: auto;
-    aspect-ratio: 4 / 5;
+  /* Eyebrow rail on the left from 1024, stacked below it. */
+  .sec-grid { display: flex; flex-direction: column; gap: 24px; }
+  .sec-body { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
+
+  .about-copy::after { content: ""; display: table; clear: both; }
+
+  .portrait {
+    float: left;
+    width: 160px;
+    height: 200px;
     object-fit: cover;
-    background: #F2F2F2;
-    border: 1px solid var(--lp-rule);
-  }
-  .portrait figcaption {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--lp-mute);
-    margin-right: -0.18em;
+    filter: grayscale(1);
+    background: var(--lp-paper-soft);
+    margin: 0 16px 8px 0;
   }
 
-  .about-body { max-width: 56ch; }
-  .about-name {
-    font-size: clamp(22px, 2.6vw, 28px);
-    line-height: 1.2;
-    font-weight: 300;
-    letter-spacing: -0.01em;
-    color: var(--lp-ink-display);
-    margin-bottom: 8px;
-  }
+  .about-name { margin: 0; }
   .about-role {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--lp-mute);
-    margin-right: -0.18em;
-    margin-bottom: 28px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--lp-mute-text);
+    margin: 4px 0 0;
   }
-  .about-body p {
+  .about-p {
     font-size: 17px;
-    line-height: 1.75;
+    line-height: 1.7;
     color: var(--lp-ink);
-    margin: 20px 0 0;
+    margin: 16px 0 0;
     text-wrap: pretty;
   }
-  .about-body p:first-of-type { margin-top: 0; }
-  .about-fine {
-    font-size: 15px !important;
-    line-height: 1.7 !important;
-    color: var(--lp-mute) !important;
-    margin-top: 24px !important;
+
+  /* 12px above and below keeps these links a 44px target. */
+
+  .about-sketch { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .about-sketch .lp-sketch { width: 100%; height: auto; }
+  .about-sketch figcaption { margin: 0; }
+
+  @media (min-width: 720px) {
+    .about { padding: 96px 0; }
+    .about-p { font-size: 18px; margin-top: 20px; }
+    .portrait { width: 240px; height: 300px; margin: 0 32px 16px 0; }
+    .about-sketch .lp-sketch { width: 600px; max-width: 100%; }
+  }
+
+  @media (min-width: 1024px) {
+    .about { padding: 128px 0; border-top: 0; }
+    .sec-grid { flex-direction: row; align-items: flex-start; gap: 32px; }
+    .sec-rail { flex: 0 0 200px; }
+    .sec-body { flex: 1 1 auto; gap: 64px; }
+    .about-copy { max-width: 72ch; }
   }
 </style>

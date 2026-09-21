@@ -80,12 +80,12 @@ const RATE_LIMIT_MAX_PER_WINDOW = 5;
 
 const submissionsByIp = new Map<string, number[]>();
 
-export function checkRateLimit(ip: string): boolean {
+export function checkRateLimit(ip: string, max: number = RATE_LIMIT_MAX_PER_WINDOW): boolean {
   const now = Date.now();
   const cutoff = now - RATE_LIMIT_WINDOW_MS;
 
   const recent = (submissionsByIp.get(ip) ?? []).filter((t) => t > cutoff);
-  const allowed = recent.length < RATE_LIMIT_MAX_PER_WINDOW;
+  const allowed = recent.length < max;
   if (allowed) recent.push(now);
   submissionsByIp.set(ip, recent);
 

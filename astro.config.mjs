@@ -8,10 +8,14 @@ export default defineConfig({
     webAnalytics: { enabled: false },
     imageService: false,
     // Ship the option-agreement PDF inside the serverless function bundle so
-    // /api/note-signup can fs.readFile it instead of fetching over HTTP. The
-    // logo no longer needs bundling - it's referenced via hosted URL in the
-    // Resend template body now that laterna.partners is publicly reachable.
-    includeFiles: ['./public/notes/Laterna - Option Agreements.pdf'],
+    // GET /api/note/[token] and, when NOTE_ATTACH_PDF=1, the note-signup
+    // email attachment can fs.readFile it instead of fetching over HTTP. It
+    // lives under src/assets/ (not public/) so it is never served as a
+    // static file with no gate: every download goes through the signed
+    // token route. The logo no longer needs bundling - it's referenced via
+    // hosted URL in the Resend template body now that laterna.partners is
+    // publicly reachable.
+    includeFiles: ['./src/assets/notes/Laterna - Option Agreements.pdf'],
   }),
   site: 'https://laterna.partners',
   // Astro 5 enables checkOrigin by default in SSR mode and rejects form POSTs

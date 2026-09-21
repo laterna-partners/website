@@ -1,0 +1,110 @@
+---
+// The privacy panel in the footer. A plain <details> so it is readable with
+// JavaScript off; the script below opens it when the page is reached at
+// #privacy or when a link on the page points at it.
+---
+<details id="privacy" class="privacy">
+  <summary class="privacy-summary">Privacy and how I use your data</summary>
+
+  <div class="privacy-body">
+    <p>
+      <strong>Who I am.</strong> Laterna Partners Ltd, company number 11017779, registered in
+      England and Wales. I am the data controller. Contact: hayri@laterna.partners.
+    </p>
+    <p>
+      <strong>What I hold and where it comes from.</strong> If I have written to you: your name
+      and the address of your property, taken from HM Land Registry title records through a
+      licensed data service, plus public planning and mapping information about the site. If you
+      contact me: your name, the phone number or email you give, the reference on your letter,
+      and anything you write in the form.
+    </p>
+    <p>
+      <strong>Why, and the legal basis.</strong> To write to you once or a few times about the
+      planning potential of your land (legitimate interests: a proportionate, low-volume approach
+      about a property you own). To reply to your enquiry and send the note you asked for (steps
+      taken at your request). To prepare and perform an option agreement (contract). I do not
+      profile you and I do not make automated decisions about you.
+    </p>
+    <p>
+      <strong>Who sees it.</strong> Only me, and the services that run this site and my email:
+      Vercel (hosting), Resend (transactional email) and Microsoft 365 (mailbox). If you decide
+      to proceed, my funding partner and our solicitors will see the details of the site and the
+      agreement. I do not sell data, run a mailing list, or share it with anyone else.
+    </p>
+    <p>
+      <strong>How long.</strong> Letter data: 12 months after the last letter, then deleted, or
+      sooner if you ask. Enquiry data: 24 months after our last contact. Option agreements and
+      related correspondence: for the life of the agreement and 6 years after.
+    </p>
+    <p>
+      <strong>Your rights.</strong> You can ask what I hold, ask me to correct or delete it, or
+      object to my writing to you. Tell me by email, phone or WhatsApp and I will not write
+      again. You can complain to the Information Commissioner's Office at ico.org.uk.
+    </p>
+    <p>
+      <strong>Cookies.</strong> None. This page sets no cookies and uses no third-party trackers.
+    </p>
+  </div>
+</details>
+
+<script>
+  const panel = document.getElementById('privacy') as HTMLDetailsElement | null;
+
+  function openIfTargeted() {
+    if (panel && window.location.hash === '#privacy') panel.open = true;
+  }
+
+  openIfTargeted();
+  window.addEventListener('hashchange', openIfTargeted);
+
+  // Clicking a #privacy link when the hash is already #privacy fires no
+  // hashchange, so open it from the click as well.
+  document.addEventListener('click', (event) => {
+    const link = (event.target as Element | null)?.closest?.('a[href="#privacy"]');
+    if (link && panel) panel.open = true;
+  });
+</script>
+
+<style>
+  .privacy { max-width: 72ch; }
+  .privacy-summary {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--lp-ink);
+    cursor: pointer;
+    padding: 12px 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--lp-rule);
+    text-underline-offset: 3px;
+  }
+  .privacy-summary::-webkit-details-marker { display: none; }
+  .privacy-summary::before {
+    content: "";
+    flex: none;
+    width: 10px;
+    height: 10px;
+    background: var(--lp-accent);
+    clip-path: polygon(40% 0, 60% 0, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0 60%, 0 40%, 40% 40%);
+    transition: transform 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+  .privacy[open] .privacy-summary::before { transform: rotate(45deg); }
+
+  .privacy-body { display: flex; flex-direction: column; gap: 16px; padding: 8px 0 8px; }
+  .privacy-body p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--lp-mute-text);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .privacy-body strong { color: var(--lp-ink); font-weight: 600; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .privacy-summary::before { transition: none; }
+  }
+</style>

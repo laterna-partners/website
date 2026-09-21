@@ -1,10 +1,12 @@
-// POST /api/contact: handles the "Write something here instead" form
-// from the Contact section. Emails Hayri via Resend, persists to Supabase.
-// Returns 200 with JSON on success, 400/500 on failure. The client-side
-// script swaps to a thank-you state when it sees 200.
+// POST /api/contact: the merged contact form (name, reach, site reference,
+// message, "also email me the note" tick). Emails Hayri via Resend, persists
+// to Supabase, and best-effort mirrors to Attio. Returns 200 JSON on
+// success, 4xx on failure; the client-side script swaps to a thank-you state
+// when it sees 200.
 import type { APIRoute } from 'astro';
-import { getResend, NOTIFY_EMAIL, FROM_EMAIL } from '../../lib/resend';
+import { getResend, NOTIFY_EMAIL, FROM_EMAIL, sendNoteEmail } from '../../lib/resend';
 import { getSupabase } from '../../lib/supabase';
+import { upsertPersonFromEnquiry } from '../../lib/attio';
 import {
   runFormGuard,
   validateName,
@@ -32,20 +34,23 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!guard.ok) return guard.response;
 
   const rawName = ((form.get('name') as string) ?? '').trim();
-  const rawContact = ((form.get('contact') as string) ?? '').trim();
-  const site = ((form.get('site') as string) ?? '').trim();
+  const rawReach = ((form.get('reach') as string) ?? '').trim();
+  const rawSite = ((form.get('site') as string) ?? '').trim();
   const message = ((form.get('message') as string) ?? '').trim();
-
-  if (!rawName || !rawContact) {
-    return jsonResponse(400, { ok: false, error: 'Name and contact required' });
-  }
+  const noteRequested = ((form.get('note') as string | null) ?? '').trim() === 'on';
 
   const name = validateName(rawName);
   if (!name) return jsonResponse(400, { ok: false, error: 'invalid_name' });
 
-  const contactCheck = validateContact(rawContact);
-  if (!contactCheck) return jsonResponse(400, { ok: false, error: 'invalid_contact' });
-  const contact = contactCheck.value;
+  const reachCheck = validateContact(rawReach);
+  if (!reachCheck) return jsonResponse(400, { ok: false, error: 'invalid_contact' });
+  const reach = reachCheck.value;
+
+  if (noteRequested && reachCheck.type !== 'email') {
+    return jsonResponse(400, { ok: false, error: 'note_needs_email' });
+  }
+
+  const site = rawSite ? rawSite.toUpperCase() : null;
 
   // Best-effort persist
   const supabase = getSupabase();
@@ -54,13 +59,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const { error } = await supabase.from('contact_submissions').insert({
       form_type: 'contact',
       name,
-      contact_method: contact,
-      site_ref: site || null,
+      contact_method: reach,
+      site_ref: site,
       message: message || null,
       arrival_ref: locals.ref ?? null,
+      note_requested: noteRequested,
     });
     supabaseOk = !error;
     if (error) console.error('[contact] supabase insert failed', error.message);
+  }
+
+  // Best-effort CRM mirror, after the Supabase insert, never blocks the
+  // response beyond attio.ts's own fixed timeout.
+  await upsertPersonFromEnquiry({
+    name,
+    email: reachCheck.type === 'email' ? reach : null,
+    phone: reachCheck.type === 'phone' ? reach : null,
+    ref: site ?? locals.ref ?? null,
+    message: message || null,
+    source: 'contact',
+  });
+
+  // When the note was requested and we have an email to send it to, send it
+  // exactly as note-signup.ts does, via the shared helper.
+  if (noteRequested && reachCheck.type === 'email') {
+    await sendNoteEmail({ toEmail: reach, name, request });
   }
 
   // Email Hayri
@@ -68,9 +91,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const subject = `Laterna enquiry: ${name}`;
   const body = [
     `Name: ${name}`,
-    `Reach: ${contact}`,
+    `Reach: ${reach}`,
     site && `Site reference: ${site}`,
     locals.ref && `Arrived via: ${locals.ref}`,
+    `Note requested: ${noteRequested ? 'yes' : 'no'}`,
     '',
     message ? `Message:\n${message}` : '(no message)',
     '',
@@ -88,7 +112,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       await resend.emails.send({
         from: FROM_EMAIL,
         to: NOTIFY_EMAIL,
-        replyTo: contactCheck.type === 'email' ? contact : undefined,
+        replyTo: reachCheck.type === 'email' ? reach : undefined,
         subject,
         text: body,
       });
@@ -100,8 +124,5 @@ export const POST: APIRoute = async ({ request, locals }) => {
     console.log('[contact] would email:', subject, '\n', body);
   }
 
-  return new Response(JSON.stringify({ ok: true }), {
-    status: 200,
-    headers: { 'content-type': 'application/json' },
-  });
+  return jsonResponse(200, { ok: true, note_requested: noteRequested });
 };

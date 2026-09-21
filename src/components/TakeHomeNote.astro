@@ -1,320 +1,329 @@
 ---
-import Section from './Section.astro';
-import Marginalia from './Marginalia.astro';
-interface Props { available?: boolean; }
-const { available = false } = Astro.props;
+// Something to read later: the light gate on the option-agreement note.
+// Sits inside the contact section, below the contact form. There is no
+// always-visible download link; the link only appears after a request.
+interface Props { ref?: string | null }
+const { ref = null } = Astro.props;
 ---
-<Section id="note" style="padding-top: 88px; padding-bottom: 88px;">
-  <Marginalia label="A take-home note" sub="I will send it to you.">
-    <div class="note-wrap">
-      <h2 class="note-head">"How option agreements actually work"</h2>
+<div class="note-block">
+  <p class="lp-eyebrow">Something to read later</p>
 
+  <div class="note-lead" data-reveal>
+    <img
+      class="lp-sketch note-cover"
+      src="/assets/sketches/note-cover.webp"
+      width="806"
+      height="604"
+      alt="An open note, six pages, with the practice's plus mark on its cover."
+      loading="lazy"
+    />
+    <div class="note-copy">
+      <h3 class="lp-h3">How option agreements actually work</h3>
       <p class="note-body">
-        If you would like to understand the legal mechanics before deciding whether to talk,
-        leave your details and I will send you a short reference note. It covers what an
-        option agreement actually commits you to, what it does not, typical timelines, the
-        kinds of questions worth asking, and where things can go wrong.
+        A short note on how an option agreement actually works: what it commits each of us to,
+        and what it leaves entirely up to you. It runs to six pages and covers most of the
+        questions people ask me on a first call.
       </p>
+    </div>
+  </div>
 
-      <form
-        id="note-form"
-        method="POST"
-        action="/api/note-signup"
-        class="note-form"
-      >
-        <div class="full-row">
-          <label class="field-label">
-            <span class="field-name">Your name *</span>
-            <input name="name" type="text" autocomplete="name" placeholder="Jane Smith" required />
+  <div class="note-slot">
+    <form id="note-form" class="note-form" method="POST" action="/api/note-signup" novalidate>
+      <div class="field-pair">
+        <div class="lp-field">
+          <label class="lp-label" for="note-name">
+            Your name <span class="req" aria-hidden="true">*</span>
           </label>
-        </div>
-        <label class="field-label">
-          <span class="field-name">Email *</span>
-          <input name="email" type="email" autocomplete="email" placeholder="you@example.co.uk" required />
-        </label>
-        <label class="field-label">
-          <span class="field-name">Phone</span>
-          <input name="phone" type="tel" autocomplete="tel" placeholder="Optional" />
-        </label>
-        <!-- honeypot for bots -->
-        <input type="text" name="company" class="honeypot" tabindex="-1" autocomplete="off" />
-        <input type="hidden" name="form_type" value="note-signup" />
-        <input type="hidden" name="form_token" value="" />
-
-        <div class="full-row">
-          <div id="turnstile-note-widget" class="turnstile-slot"></div>
+          <input
+            class="lp-input"
+            id="note-name"
+            name="name"
+            type="text"
+            placeholder="Jane Smith"
+            autocomplete="name"
+            required
+          />
+          <p class="lp-error" id="note-name-error" hidden></p>
         </div>
 
-        <div class="full-row submit-row">
-          <button type="submit" class="lp-submit">
-            {available ? 'Send me the note' : 'Send it to me when it is ready'}
-          </button>
-          {!available && (
-            <span class="prep-flag">In preparation</span>
-          )}
-          <span class="lp-fine privacy-note">
-            Goes only to me. No mailing list, no sharing with third parties.
-          </span>
-        </div>
-
-        <p id="note-error" class="form-error full-row" hidden>
-          Sorry, that could not be sent. Please email
-          {' '}<a href="mailto:hayri@laterna.partners" class="lp-link">hayri@laterna.partners</a>.
-        </p>
-      </form>
-
-      <div id="note-sent" class="note-sent" hidden>
-        <div class="sent-label">Thank you</div>
-        <p class="sent-body">
-          {available
-            ? 'The note is on its way to your inbox. You can also download it now.'
-            : 'I have your details. The note will land in your inbox as soon as it is finished.'}
-        </p>
-        <div class="sent-actions">
-          {available && (
-            <a
-              href="/notes/Laterna%20-%20Option%20Agreements.pdf"
-              download="Laterna - Option Agreements.pdf"
-              class="lp-ghost-button"
-            >
-              <span>Download the note now</span>
-              <span class="ghost-meta">PDF · 528 KB</span>
-            </a>
-          )}
-          <button type="button" id="note-reset" class="reset-btn">Submit different details</button>
+        <div class="lp-field">
+          <label class="lp-label" for="note-email">
+            Email <span class="req" aria-hidden="true">*</span>
+          </label>
+          <input
+            class="lp-input"
+            id="note-email"
+            name="email"
+            type="email"
+            placeholder="jane@example.com"
+            autocomplete="email"
+            required
+          />
+          <p class="lp-error" id="note-email-error" hidden></p>
         </div>
       </div>
+
+      <input
+        class="honeypot"
+        type="text"
+        name="company"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+      />
+      <input type="hidden" name="ref" value={ref ?? ''} />
+      <input type="hidden" name="form_type" value="note-signup" />
+      <input type="hidden" name="form_token" value="" />
+
+      {ref && <p class="lp-caption">Sent with your reference {ref}</p>}
+
+      <div class="turnstile-wrap">
+        <div id="turnstile-note" class="lp-turnstile"></div>
+        <p class="lp-caption">Checked for spam by Cloudflare. No cookies.</p>
+      </div>
+
+      <div class="submit-row">
+        <button type="submit" class="lp-btn lp-btn-secondary">Send me the note</button>
+        <p class="lp-error form-fail" id="note-fail" hidden>
+          Sorry, that could not be sent. Please email
+          <a href="mailto:hayri@laterna.partners" data-click="email">hayri@laterna.partners</a>
+          and I will send it by hand.
+        </p>
+        <p class="lp-caption">Straight to your inbox. No mailing list, and I will not chase you.</p>
+      </div>
+    </form>
+
+    <div id="note-success" class="note-success" role="status" hidden>
+      <svg class="tick" width="24" height="24" viewBox="0 0 64 64" role="img" aria-label="Sent" focusable="false">
+        <path d="M9.5 31.5L25.09 40.5L54.53 23.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" pathLength="1"></path>
+      </svg>
+      <p class="note-success-line" id="note-success-line">On its way.</p>
+      <a class="note-download" id="note-download" href="#" hidden>
+        Or download it now (PDF, six pages, 528 KB)
+      </a>
     </div>
-  </Marginalia>
-</Section>
+  </div>
+</div>
 
 <script>
-  import { fillFormToken, renderTurnstile, resetTurnstile } from '../lib/form-client';
+  import { fillFormToken, postForm, renderTurnstile, resetTurnstile } from '../lib/form-client';
 
   const form = document.getElementById('note-form') as HTMLFormElement | null;
-  const sent = document.getElementById('note-sent');
-  const reset = document.getElementById('note-reset');
-  const errorMsg = document.getElementById('note-error');
-  const submitBtn = form?.querySelector('button[type=submit]') as HTMLButtonElement | null;
-  const submitLabel = submitBtn?.textContent ?? '';
+  const success = document.getElementById('note-success');
+  const successLine = document.getElementById('note-success-line');
+  const download = document.getElementById('note-download') as HTMLAnchorElement | null;
+  const fail = document.getElementById('note-fail');
+  const nameInput = document.getElementById('note-name') as HTMLInputElement | null;
+  const emailInput = document.getElementById('note-email') as HTMLInputElement | null;
+  const nameError = document.getElementById('note-name-error');
+  const emailError = document.getElementById('note-email-error');
 
-  fillFormToken(form);
-  renderTurnstile('turnstile-note-widget', import.meta.env.PUBLIC_TURNSTILE_SITE_KEY);
+  const GENERIC =
+    'Sorry, that could not be sent. Please email hayri@laterna.partners and I will send it by hand.';
 
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    errorMsg?.setAttribute('hidden', '');
-    const tokenInput = form.querySelector<HTMLInputElement>('input[name="form_token"]');
-    if (tokenInput && !tokenInput.value) await fillFormToken(form);
-    const data = new FormData(form);
-    const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
-    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
-    try {
-      const res = await fetch('/api/note-signup', { method: 'POST', body: data });
-      if (!res.ok) throw new Error('Failed');
-      if (btn) { btn.disabled = false; btn.textContent = submitLabel; }
-      form.hidden = true;
-      sent?.removeAttribute('hidden');
-      sent?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } catch (_err) {
-      if (btn) { btn.disabled = false; btn.textContent = 'Try again'; }
-      errorMsg?.removeAttribute('hidden');
-      resetTurnstile('turnstile-note-widget');
+  function setFieldError(input: HTMLInputElement | null, box: HTMLElement | null, message: string) {
+    if (!input || !box) return;
+    box.textContent = message;
+    box.hidden = false;
+    input.setAttribute('aria-invalid', 'true');
+    input.setAttribute('aria-describedby', box.id);
+  }
+
+  function clearFieldError(input: HTMLInputElement | null, box: HTMLElement | null) {
+    if (!input || !box) return;
+    box.textContent = '';
+    box.hidden = true;
+    input.removeAttribute('aria-invalid');
+    input.removeAttribute('aria-describedby');
+  }
+
+  function showFailure(message?: string) {
+    if (!fail) return;
+    if (message) fail.textContent = message;
+    fail.hidden = false;
+  }
+
+  function applyServerError(code: string | undefined) {
+    switch (code) {
+      case 'invalid_name':
+        setFieldError(nameInput, nameError, 'Please add your name so I know who to write to.');
+        nameInput?.focus();
+        return;
+      case 'invalid_email':
+      case 'invalid_contact':
+      case 'note_needs_email':
+        setFieldError(emailInput, emailError, 'Please check that email address.');
+        emailInput?.focus();
+        return;
+      case 'bad_token':
+      case 'verification_failed':
+      case 'bad_origin':
+        showFailure('That could not be checked for spam. Please try again, or email me.');
+        return;
+      case 'rate_limited':
+        showFailure('That is several requests in a short time. Please try again shortly.');
+        return;
+      default:
+        showFailure(GENERIC);
     }
-  });
+  }
 
-  reset?.addEventListener('click', () => {
-    sent?.setAttribute('hidden', '');
-    form?.removeAttribute('hidden');
-    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitLabel; }
-    form?.reset();
+  if (form) {
     fillFormToken(form);
-    // The previous Turnstile token was already used on the successful submit
-    // that led here, so this next submission needs a fresh one.
-    resetTurnstile('turnstile-note-widget');
-  });
+    renderTurnstile('turnstile-note', import.meta.env.PUBLIC_TURNSTILE_SITE_KEY);
+
+    nameInput?.addEventListener('input', () => clearFieldError(nameInput, nameError));
+    emailInput?.addEventListener('input', () => clearFieldError(emailInput, emailError));
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearFieldError(nameInput, nameError);
+      clearFieldError(emailInput, emailError);
+      if (fail) fail.hidden = true;
+
+      const name = nameInput?.value.trim() ?? '';
+      const email = emailInput?.value.trim() ?? '';
+
+      if (!name) {
+        setFieldError(nameInput, nameError, 'Please add your name so I know who to write to.');
+        nameInput?.focus();
+        return;
+      }
+      if (!email || !email.includes('@')) {
+        setFieldError(emailInput, emailError, 'Please add the email address to send the note to.');
+        emailInput?.focus();
+        return;
+      }
+
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const label = button?.textContent ?? 'Send me the note';
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Sending...';
+      }
+
+      const tokenInput = form.querySelector<HTMLInputElement>('input[name="form_token"]');
+      if (tokenInput && !tokenInput.value) await fillFormToken(form);
+
+      try {
+        const { body: result } = await postForm(form);
+        if (result && result.ok) {
+          if (successLine) successLine.textContent = `On its way to ${email}.`;
+          const url = (result as { download_url?: string }).download_url;
+          if (url && download) {
+            download.href = url;
+            download.hidden = false;
+          }
+          // Hold the space the form occupied so nothing below it moves.
+          const slot = form.closest('.note-slot') as HTMLElement | null;
+          if (slot) slot.style.minHeight = `${Math.round(slot.getBoundingClientRect().height)}px`;
+          form.hidden = true;
+          success?.removeAttribute('hidden');
+          return;
+        }
+        applyServerError(result?.error);
+      } catch {
+        showFailure(GENERIC);
+      }
+
+      if (button) {
+        button.disabled = false;
+        button.textContent = label;
+      }
+      resetTurnstile('turnstile-note');
+      await fillFormToken(form);
+    });
+  }
 </script>
 
 <style>
-  .note-wrap { max-width: 56rem; }
-  .note-head {
-    font-size: clamp(24px, 3.2vw, 36px);
-    line-height: 1.2;
-    font-weight: 300;
-    letter-spacing: -0.01em;
-    color: var(--lp-ink-display);
-    margin: 0;
-    max-width: 26ch;
-    text-wrap: balance;
+  .note-block {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 48px;
+    border-top: 1px solid var(--lp-rule);
   }
+
+  .note-lead { display: flex; flex-direction: column; gap: 16px; }
+  .note-cover { width: 200px; max-width: 100%; height: auto; }
+  .note-copy { display: flex; flex-direction: column; gap: 8px; }
   .note-body {
     font-size: 17px;
-    line-height: 1.75;
+    line-height: 1.7;
     color: var(--lp-ink);
-    margin: 24px 0 0;
-    max-width: 60ch;
+    margin: 0;
+    max-width: 48ch;
     text-wrap: pretty;
   }
 
-  .note-form {
-    margin-top: 40px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 28px 40px;
-    max-width: 720px;
-  }
+  /* The form's height is measured and reserved on the slot at submit time,
+     so swapping in the success panel moves nothing below it. */
+  .note-slot { margin-top: 16px; }
+  .note-form { display: flex; flex-direction: column; gap: 24px; max-width: 62ch; }
   .note-form[hidden] { display: none; }
-  .full-row { grid-column: 1 / -1; }
-  .field-label { display: flex; flex-direction: column; gap: 10px; }
-  .field-name {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--lp-mute);
-    margin-right: -0.18em;
-  }
-  .field-label input,
-  .field-label textarea {
-    appearance: none;
-    background: transparent;
-    border: 0;
-    border-bottom: 1px solid var(--lp-rule);
-    border-radius: 0;
-    padding: 10px 0;
-    font: inherit;
-    font-size: 16px;
-    color: var(--lp-ink-display);
-    width: 100%;
-    font-family: var(--lp-sans);
-    outline: none;
-    transition: border-color 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
-  }
-  .field-label input:focus,
-  .field-label textarea:focus { border-bottom-color: var(--lp-ink-display); }
+  .field-pair { display: flex; flex-direction: column; gap: 24px; }
+  .req { color: var(--lp-ink-display); }
 
   .honeypot {
     position: absolute;
-    left: -9999px;
     width: 1px;
     height: 1px;
-    opacity: 0;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
-  .turnstile-slot {
-    width: 100%;
-    min-width: 0;
-  }
-  .turnstile-slot:empty { display: none; }
-  /* The "flexible" Turnstile size fills its container; keep the iframe from
-     ever forcing horizontal scroll on a narrow phone. Below roughly 300px
-     the widget itself may still clip slightly; that's a Cloudflare-side
-     minimum, not something worth fighting here. */
-  .turnstile-slot iframe { max-width: 100%; }
+  .turnstile-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .lp-turnstile { min-height: 65px; width: 100%; }
+  .lp-turnstile :global(iframe) { max-width: 100%; }
 
-  .form-error {
-    margin-top: 8px;
-    font-size: 14px;
+  .submit-row { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+  .form-fail[hidden] { display: none; }
+
+  .note-success {
+    background: var(--lp-paper-soft);
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 62ch;
+  }
+  .note-success[hidden] { display: none; }
+  .tick { color: var(--lp-ink); }
+  .tick path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: note-tick-draw 400ms cubic-bezier(0.2, 0.6, 0.2, 1) 120ms forwards;
+  }
+  @keyframes note-tick-draw { to { stroke-dashoffset: 0; } }
+  .note-success-line {
+    font-size: 17px;
     line-height: 1.6;
     color: var(--lp-ink-display);
-  }
-
-  .submit-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 20px 28px;
-    margin-top: 8px;
-  }
-  .lp-submit {
-    font-family: var(--lp-sans);
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: var(--lp-paper);
-    background: var(--lp-ink-display);
-    border: 1px solid var(--lp-ink-display);
-    border-radius: 0;
-    padding: 14px 28px;
-    cursor: pointer;
-    transition: background 180ms cubic-bezier(0.2, 0.6, 0.2, 1), color 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
-  }
-  .lp-submit:hover {
-    background: var(--lp-paper);
-    color: var(--lp-ink-display);
-  }
-  .lp-submit:disabled { opacity: 0.5; cursor: wait; }
-  .prep-flag {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--lp-accent);
-    margin-right: -0.2em;
-  }
-  .privacy-note { max-width: 38ch; }
-
-  .note-sent {
-    margin-top: 40px;
-    padding-top: 28px;
-    border-top: 1px solid var(--lp-accent);
-    max-width: 52rem;
-  }
-  .sent-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--lp-accent);
-    margin-right: -0.18em;
-    margin-bottom: 14px;
-  }
-  .sent-body {
-    font-size: 19px;
-    line-height: 1.55;
-    font-weight: 400;
-    color: var(--lp-ink-display);
     margin: 0;
-    max-width: 40ch;
-    text-wrap: balance;
+    overflow-wrap: anywhere;
   }
-  .sent-actions {
-    margin-top: 24px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 24px;
+  .note-download { display: inline-block; font-size: 17px; padding: 12px 0; }
+  .note-download[hidden] { display: none; }
+
+  @media (min-width: 720px) {
+    .note-block { padding-top: 64px; gap: 24px; }
+    .note-body { font-size: 18px; }
+    .note-lead { flex-direction: row; align-items: center; gap: 32px; }
+    .note-cover { flex: 0 0 160px; width: 160px; }
   }
-  .lp-ghost-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: var(--lp-ink-display);
-    background: transparent;
-    border: 1px solid var(--lp-ink-display);
-    border-radius: 0;
-    padding: 14px 24px;
-    text-decoration: none;
-    transition: background 180ms cubic-bezier(0.2, 0.6, 0.2, 1), color 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+
+  @media (min-width: 1024px) {
+    .field-pair { flex-direction: row; gap: 24px; }
+    .field-pair > .lp-field { flex: 1 1 0; min-width: 0; }
   }
-  .lp-ghost-button:hover {
-    background: var(--lp-ink-display);
-    color: var(--lp-paper);
-  }
-  .ghost-meta { color: var(--lp-mute); font-size: 13px; }
-  .reset-btn {
-    appearance: none;
-    background: transparent;
-    border: 0;
-    padding: 0;
-    font-family: var(--lp-sans);
-    font-size: 14px;
-    color: var(--lp-mute);
-    cursor: pointer;
-    border-bottom: 1px solid var(--lp-rule);
-    padding-bottom: 2px;
+
+  @media (prefers-reduced-motion: reduce) {
+    .tick path { animation: none; stroke-dashoffset: 0; }
   }
 </style>

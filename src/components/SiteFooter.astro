@@ -1,97 +1,115 @@
 ---
-import Wordmark from './Wordmark.astro';
-import Label from './Label.astro';
-const year = new Date().getFullYear();
+import PrivacyPanel from './PrivacyPanel.astro';
 ---
 <footer class="site-footer">
-  <div class="lp-shell footer-grid">
-    <div>
-      <Wordmark size={16} />
-      <p class="footer-blurb">
-        A small London-based practice, helping landowners explore the planning value of their
-        sites.
-      </p>
-    </div>
-
-    <div>
-      <Label asTag="div" tone="mute" style="margin-bottom: 12px;">Office</Label>
-      <div class="footer-text">
-        Laterna+Partners<br/>
-        7 Daffodil Close<br/>
-        London CR4 4FS
+  <div class="lp-shell footer-top">
+    <div class="footer-cols">
+      <div class="footer-col">
+        <img
+          class="footer-mark"
+          src="/assets/laterna-logo-full.png"
+          alt="Laterna+Partners"
+          width="120"
+          height="49"
+          loading="lazy"
+        />
+        <p class="footer-line">
+          A small practice in South West London, helping landowners explore the planning value of
+          their sites.
+        </p>
       </div>
-    </div>
 
-    <div>
-      <Label asTag="div" tone="mute" style="margin-bottom: 12px;">Contact</Label>
-      <div class="footer-text contact-lines">
-        <a href="tel:+447471127212" class="footer-link">+44 7471 127212</a><br/>
-        <a href="mailto:hayri@laterna.partners" class="footer-link">hayri@laterna.partners</a>
+      <div class="footer-col">
+        <a class="footer-link" href="tel:+447471127212" data-click="call">
+          +44 7471 127212 (call or WhatsApp)
+        </a>
+        <a class="footer-link" href="mailto:hayri@laterna.partners" data-click="email">
+          hayri@laterna.partners
+        </a>
+        <a
+          class="footer-link"
+          href="https://www.linkedin.com/company/laterna-partners"
+          target="_blank"
+          rel="noopener"
+        >LinkedIn</a>
       </div>
+
     </div>
 
-    <div>
-      <Label asTag="div" tone="mute" style="margin-bottom: 12px;">Privacy</Label>
-      <p class="footer-privacy">
-        All enquiries are treated in strict confidence. No cookies, no third-party
-        trackers, no mailing lists.
+    <div class="footer-privacy">
+      <PrivacyPanel />
+    </div>
+
+    <div class="footer-notes">
+      <p class="footer-disclaimer">
+        Information on this page is general guidance, not planning, legal, financial or valuation
+        advice. Any offer is subject to contract and to the terms of a written option agreement.
       </p>
+      <p class="footer-disclaimer">This page sets no cookies and uses no trackers.</p>
     </div>
   </div>
 
-  <div class="lp-shell footer-meta">
-    <span>© {year} Laterna+Partners</span>
-    <span>Registered in England &amp; Wales</span>
+  <div class="legal-bar">
+    <div class="lp-shell">
+      <p class="legal-text">
+        Laterna Partners Ltd, registered in England and Wales, company number 11017779.
+        Registered office: 7 Daffodil Close, Mitcham CR4 4FS.
+      </p>
+    </div>
   </div>
 </footer>
 
 <style>
   .site-footer { border-top: 1px solid var(--lp-rule); }
-  .footer-grid {
-    padding-top: 64px;
-    padding-bottom: 72px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 36px;
-    align-items: start;
-  }
-  .footer-blurb {
-    font-size: 13px;
-    color: var(--lp-mute);
-    margin: 14px 0 0;
-    line-height: 1.7;
-    max-width: 34ch;
-  }
-  .footer-text {
-    font-size: 13px;
-    color: var(--lp-ink);
-    line-height: 1.7;
-  }
-  .contact-lines { line-height: 1.9; }
-  .footer-link {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px solid var(--lp-rule);
-    padding-bottom: 1px;
-  }
-  .footer-privacy {
-    font-size: 13px;
-    color: var(--lp-mute);
+  .footer-top { padding-top: 48px; padding-bottom: 32px; }
+
+  .footer-cols { display: flex; flex-direction: column; gap: 32px; }
+  .footer-col { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .footer-mark { width: 120px; height: auto; margin-bottom: 8px; }
+
+  .footer-line {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--lp-mute-text);
     margin: 0;
-    line-height: 1.7;
-    max-width: 32ch;
+    max-width: 40ch;
   }
-  .footer-meta {
-    padding-top: 18px;
-    padding-bottom: 28px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    border-top: 1px solid var(--lp-rule);
-    font-size: 12px;
-    color: var(--lp-mute);
-    letter-spacing: 0.02em;
+  .footer-link {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--lp-ink);
+    padding: 12px 0;
+    display: inline-block;
+  }
+
+  .footer-privacy { margin-top: 32px; }
+  .footer-notes { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+  .footer-disclaimer {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--lp-mute-text);
+    margin: 0;
+    max-width: 78ch;
+  }
+
+  .legal-bar { border-top: 1px solid var(--lp-rule); padding: 24px 0; }
+  .legal-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--lp-mute-text);
+    margin: 0;
+  }
+
+  @media (min-width: 720px) {
+    .footer-top { padding-top: 64px; padding-bottom: 40px; }
+    .footer-cols {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 40px 32px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-cols { grid-template-columns: 1.4fr 1fr; column-gap: 64px; }
   }
 </style>

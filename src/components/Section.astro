@@ -9,9 +9,22 @@ const { id, divider = true, style = '' } = Astro.props;
 <section
   id={id}
   class:list={[divider && 'lp-section']}
-  style={`padding-top: 88px; padding-bottom: 88px; ${style}`}
+  style={style}
 >
   <div class="lp-shell">
     <slot />
   </div>
 </section>
+
+<style>
+  section {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+  @media (min-width: 720px) {
+    section {
+      padding-top: 128px;
+      padding-bottom: 128px;
+    }
+  }
+</style>

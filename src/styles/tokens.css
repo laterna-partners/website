@@ -1,23 +1,27 @@
 /* =============================================================
-   LATERNA+PARTNERS — Design Tokens
-   Colour, typography, and semantic styles.
-   Import this file at the top of any HTML mock.
+   LATERNA+PARTNERS: Design tokens and global classes
+   Colour, typography, and the shared component contract.
+   Import this file once, at the top of Base.astro.
+
+   Breakpoints used throughout this file (mobile-first, min-width
+   queries): 480, 720, 860, 1024.
    ============================================================= */
 
-/* Webfont — Mulish (Vernon Adams). Avenir-adjacent geometric humanist
-   sans, full 200–900 weight range via variable font, NOT one of the
+/* Webfont: Mulish (Vernon Adams). Avenir-adjacent geometric humanist
+   sans, full 200-900 weight range via variable font, NOT one of the
    SaaS-default fonts. Falls back to the Helvetica Neue stack.
-   Self-hosted from /fonts/ — GDPR-clean, no CDN dependency. */
+   Self-hosted WOFF2 from /fonts/, converted from the source TTFs:
+   no Google Fonts, no CDN dependency. */
 @font-face {
   font-family: "Mulish";
-  src: url("/fonts/Mulish-VariableFont_wght.ttf") format("truetype");
+  src: url("/fonts/Mulish-VariableFont_wght.woff2") format("woff2");
   font-weight: 200 900;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Mulish";
-  src: url("/fonts/Mulish-Italic-VariableFont_wght.ttf") format("truetype");
+  src: url("/fonts/Mulish-Italic-VariableFont_wght.woff2") format("woff2");
   font-weight: 200 900;
   font-style: italic;
   font-display: swap;
@@ -26,42 +30,44 @@
 :root {
   /* ------- Brand palette ----------------------------------- */
   /* Never use pure black. Primary text is a warm dark grey. */
-  --lp-ink:          #4A4A4A;   /* Primary text                 */
-  --lp-ink-display:  #3D3D3D;   /* Display / headlines          */
-  --lp-mute:         #888888;   /* Subtle / secondary text      */
-  --lp-rule:         #BBBBBB;   /* Hairline rules, dividers     */
-  --lp-paper:        #FFFFFF;   /* Background                   */
-  --lp-paper-soft:   #FAFAFA;   /* Optional, sparingly          */
+  --lp-ink:          #4A4A4A;   /* Primary text                          */
+  --lp-ink-display:  #3D3D3D;   /* Display / headlines / buttons         */
+  --lp-mute-text:    #6B6B6B;   /* Small text: captions, labels, eyebrows */
+  --lp-control:      #6B6B6B;   /* Field underlines, control borders     */
+  --lp-mute:         #888888;   /* Non-text use only (never set as a text colour) */
+  --lp-rule:         #BBBBBB;   /* Hairline rules, dividers              */
+  --lp-paper:        #FFFFFF;   /* Background                            */
+  --lp-paper-soft:   #FAFAFA;   /* Optional, sparingly                   */
 
-  /* Accent blue — Pantone 283 C. SIGNAL, NOT DECORATION.
+  /* Accent blue: Pantone 283 C. SIGNAL, NOT DECORATION.
      Permitted uses ONLY:
-       — Letter-spaced uppercase labels (REFERENCE, DATE…)
-       — The dot in "laterna.partners"
-       — The "RE" prefix on subject lines
-       — Single hairline rules
-       — The + in the logomark
-     Never as a background. Never on body text.
+       - The plus mark before eyebrows
+       - Letter-spaced uppercase labels
+       - The dot in "laterna.partners"
+       - Single hairline rules used as accents
+     Never as a background, never as text, never as a border.
      Never introduce a secondary accent.                       */
-  --lp-accent:       #92C1E9;   /* Pantone 283 C — the one accent */
+  --lp-accent:       #92C1E9;   /* Pantone 283 C: the one accent */
+  --lp-accent-tint:  #F4F9FD;   /* Accent-tinted panel fill (never text) */
 
   /* ------- Type stack ------------------------------------- */
-  /* Geometric sans throughout. Single typeface — no pairing.
+  /* Geometric sans throughout. Single typeface: no pairing.
      Mulish is the chosen web typeface (Avenir-adjacent, geometric,
      humanist warmth, NOT a SaaS-default like Inter/Manrope/DM Sans).
      Falls back to the Helvetica Neue stack if the font fails to load. */
   --lp-sans: "Mulish", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   /* ------- Type scale (rem-based, 1rem = 16px) ------------ */
-  --lp-fs-micro:   0.75rem;     /* 12 — letter-spaced labels   */
-  --lp-fs-small:   0.8125rem;   /* 13 — captions, marginalia   */
-  --lp-fs-body:    1rem;        /* 16 — body min on mobile     */
-  --lp-fs-body-lg: 1.125rem;    /* 18 — body on desktop        */
-  --lp-fs-lede:    1.25rem;     /* 20 — opening paragraph      */
+  --lp-fs-micro:   0.75rem;     /* 12: letter-spaced labels   */
+  --lp-fs-small:   0.8125rem;   /* 13: captions, legal bar    */
+  --lp-fs-body:    1rem;        /* 16                          */
+  --lp-fs-body-lg: 1.125rem;    /* 18: body on desktop        */
+  --lp-fs-lede:    1.25rem;     /* 20: opening paragraph      */
   --lp-fs-h4:      1.375rem;    /* 22                          */
   --lp-fs-h3:      1.75rem;     /* 28                          */
   --lp-fs-h2:      2.25rem;     /* 36                          */
   --lp-fs-h1:      3rem;        /* 48                          */
-  --lp-fs-display: 4rem;        /* 64 — sparingly              */
+  --lp-fs-display: 4rem;        /* 64: sparingly              */
 
   /* ------- Line heights ----------------------------------- */
   --lp-lh-tight:  1.15;
@@ -70,7 +76,7 @@
   --lp-lh-loose:  1.7;          /* long-form letter copy       */
 
   /* ------- Weights ---------------------------------------- */
-  /* Modernist letterhead — restrained. Mostly 300/400/500.   */
+  /* Modernist letterhead: restrained. Mostly 300/400/500.   */
   --lp-w-light:   300;
   --lp-w-book:    400;
   --lp-w-medium:  500;
@@ -102,14 +108,12 @@
   --lp-letter-w:   720px;       /* A4-ish letter column        */
 
   /* ------- Borders / hairlines ---------------------------- */
-  /* Hairline is the system's only divider.                  */
   --lp-hairline:        1px solid var(--lp-rule);
   --lp-hairline-accent: 1px solid var(--lp-accent);
   --lp-hairline-ink:    1px solid var(--lp-ink);
 
   /* ------- Radii ------------------------------------------ */
-  /* Architectural. Sharp corners. Radii reserved for the
-     occasional pill-shaped input/CTA. No rounded cards.     */
+  /* Architectural. Sharp corners everywhere except the odd pill. */
   --lp-r-none: 0;
   --lp-r-pill: 999px;
 
@@ -118,7 +122,6 @@
   --lp-shadow-none: none;
 
   /* ------- Motion ----------------------------------------- */
-  /* Restrained: short fades, no bounces, no slide-ins.      */
   --lp-ease:        cubic-bezier(0.2, 0.6, 0.2, 1);
   --lp-dur-fast:    120ms;
   --lp-dur-base:    180ms;
@@ -126,29 +129,9 @@
 }
 
 /* =============================================================
-   Accessibility — reduced motion
-   Even though motion is already minimal, honour the OS preference. */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* =============================================================
-   Focus — visible always when keyboard-navigating.
-   2px solid ink, 4px offset. No accent blue (would clash with the
-   accent-as-signal rule for labels).                              */
-:focus-visible {
-  outline: 2px solid var(--lp-ink-display);
-  outline-offset: 4px;
-  border-radius: 1px;
-}
-
-/* =============================================================
-   Base / element defaults
+   Resets
    ============================================================= */
+*, *::before, *::after { box-sizing: border-box; }
 
 html { -webkit-text-size-adjust: 100%; }
 
@@ -157,59 +140,147 @@ body {
   background: var(--lp-paper);
   color: var(--lp-ink);
   font-family: var(--lp-sans);
-  font-size: var(--lp-fs-body);
-  line-height: var(--lp-lh-body);
+  font-size: 17px;
+  line-height: var(--lp-lh-loose);
   font-weight: var(--lp-w-book);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 720px) {
+  body { font-size: var(--lp-fs-body-lg); /* 18px desktop */ }
 }
 
-::selection {
-  background: var(--lp-accent);
-  color: var(--lp-ink-display);
+h1, h2, h3, h4, p, figure, ul, ol, dl, dd { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+input, textarea { font: inherit; color: inherit; background: transparent; border: 0; border-radius: 0; outline: 0; width: 100%; }
+img, svg { display: block; max-width: 100%; }
+
+::selection { background: var(--lp-accent); color: var(--lp-ink-display); }
+
+/* =============================================================
+   Focus: visible always when keyboard-navigating.
+   2px ink-display, 4px offset. Never accent blue (accent is a
+   signal colour only, reserved off body/interactive text).      */
+:focus-visible {
+  outline: 2px solid var(--lp-ink-display);
+  outline-offset: 4px;
+  border-radius: 1px;
 }
 
 /* =============================================================
-   Semantic type — apply by class or element.
-   ============================================================= */
+   Links: ink text, 1px hairline underline, 3px offset; the
+   underline turns accent on hover (120ms).                      */
+a {
+  color: var(--lp-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--lp-rule);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--lp-dur-fast) var(--lp-ease);
+}
+a:hover { text-decoration-color: var(--lp-accent); }
 
-/* Display — the "first 5 seconds" headline */
-.lp-display, h1.lp-display {
-  font-size: var(--lp-fs-display);
-  line-height: var(--lp-lh-tight);
-  font-weight: var(--lp-w-light);
-  letter-spacing: var(--lp-tr-tight);
+/* Nav links: no underline at rest; a 1px accent underline slides
+   in from the left on hover (180ms).                            */
+.lp-nav a {
   color: var(--lp-ink-display);
-  margin: 0 0 var(--lp-s-6);
-  text-wrap: balance;
+  text-decoration: none;
+  position: relative;
+}
+.lp-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 100%; bottom: -6px;
+  height: 1px;
+  background: var(--lp-accent);
+  transition: right var(--lp-dur-base) var(--lp-ease);
+}
+.lp-nav a:hover::after { right: 0; }
+
+/* =============================================================
+   Layout: .lp-shell and .lp-section
+   ============================================================= */
+.lp-shell {
+  max-width: var(--lp-page-max);
+  margin: 0 auto;
+  padding: 0 22px;
+  box-sizing: border-box;
+}
+@media (min-width: 720px) {
+  .lp-shell { padding: 0 32px; }
 }
 
-/* h1–h4 — title hierarchy */
-.lp-h1, h1 {
-  font-size: var(--lp-fs-h1);
-  line-height: var(--lp-lh-tight);
-  font-weight: var(--lp-w-light);
-  letter-spacing: var(--lp-tr-tight);
+.lp-section { border-bottom: 1px solid var(--lp-rule); }
+.lp-section:last-of-type { border-bottom: 0; }
+
+/* =============================================================
+   The plus mark: the practice's one recurring glyph.
+   Markup: <svg class="lp-plus" viewBox="0 0 36 36" aria-hidden="true">
+             <rect x="15" y="0" width="6" height="36"/>
+             <rect x="0" y="15" width="36" height="6"/>
+           </svg>
+   Do not set fill on the rects: .lp-plus supplies it, so callers
+   (the FAQ toggle, error lines) can recolour or rotate it in CSS. */
+.lp-plus {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  fill: var(--lp-accent);
+  transition: transform var(--lp-dur-base) var(--lp-ease);
+}
+
+/* Eyebrow: 13px uppercase letter-spaced ink-display with the plus
+   mark before it. Markup: <p class="lp-eyebrow"><svg class="lp-plus">
+   ...</svg>Label text</p> (or a <span>/<div>, any inline-flex host). */
+.lp-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: var(--lp-tr-label);
+  text-transform: uppercase;
   color: var(--lp-ink-display);
-  margin: 0 0 var(--lp-s-5);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* =============================================================
+   Type: headings, lede, small, caption
+   ============================================================= */
+.lp-h1, h1 {
+  font-size: clamp(2.5rem, 1.6rem + 3.8vw, 5rem); /* 40px -> 80px */
+  line-height: 1.1;
+  font-weight: var(--lp-w-light);
+  letter-spacing: -0.02em;
+  color: var(--lp-ink-display);
+  margin: 0;
   text-wrap: balance;
 }
 .lp-h2, h2 {
-  font-size: var(--lp-fs-h2);
-  line-height: var(--lp-lh-snug);
+  font-size: 28px;
+  line-height: 1.15;
   font-weight: var(--lp-w-light);
-  letter-spacing: var(--lp-tr-tight);
+  letter-spacing: -0.01em;
   color: var(--lp-ink-display);
-  margin: 0 0 var(--lp-s-4);
+  margin: 0;
   text-wrap: balance;
 }
+@media (min-width: 720px) {
+  .lp-h2, h2 { font-size: 36px; }
+}
+@media (min-width: 1024px) {
+  .lp-h2, h2 { font-size: 44px; }
+}
 .lp-h3, h3 {
-  font-size: var(--lp-fs-h3);
-  line-height: var(--lp-lh-snug);
+  font-size: 22px;
+  line-height: 1.25;
   font-weight: var(--lp-w-book);
   color: var(--lp-ink-display);
-  margin: 0 0 var(--lp-s-4);
+  margin: 0;
   text-wrap: balance;
 }
 .lp-h4, h4 {
@@ -217,192 +288,437 @@ body {
   line-height: var(--lp-lh-snug);
   font-weight: var(--lp-w-medium);
   color: var(--lp-ink-display);
-  margin: 0 0 var(--lp-s-3);
+  margin: 0;
 }
 
-/* Lede — the opening paragraph after a headline */
 .lp-lede {
-  font-size: var(--lp-fs-lede);
-  line-height: var(--lp-lh-body);
+  font-size: 20px;
+  line-height: 1.5;
   font-weight: var(--lp-w-light);
   color: var(--lp-ink);
   max-width: var(--lp-measure);
-  text-wrap: pretty;
-}
-
-/* Body */
-.lp-body, p {
-  font-size: var(--lp-fs-body-lg);
-  line-height: var(--lp-lh-loose);
-  font-weight: var(--lp-w-book);
-  color: var(--lp-ink);
-  max-width: var(--lp-measure);
-  text-wrap: pretty;
-}
-
-/* Small / secondary */
-.lp-small {
-  font-size: var(--lp-fs-small);
-  line-height: var(--lp-lh-body);
-  color: var(--lp-mute);
-}
-
-/* The signature letter-spaced uppercase label — accent blue.
-   Use for: REFERENCE, DATE, FROM, OFFICE, section eyebrows. */
-.lp-label {
-  font-size: var(--lp-fs-micro);
-  font-weight: 600;                       /* heavier strokes for the pale accent */
-  text-transform: uppercase;
-  letter-spacing: var(--lp-tr-label);
-  color: var(--lp-accent);
-  line-height: 1.4;
-  margin: 0 0 var(--lp-s-3);
-  display: block;
-  /* compensate for trailing letter-spacing pushing the right edge */
-  margin-right: calc(var(--lp-tr-label) * -1);
-}
-
-/* A version of the label without colour — for marginalia/captions */
-.lp-label--mute {
-  color: var(--lp-mute);
-}
-
-/* The "R E" subject-line prefix — the only place blue meets ink */
-.lp-subject {
-  font-size: var(--lp-fs-body);
-  font-weight: var(--lp-w-book);
-  color: var(--lp-ink);
-  margin: var(--lp-s-5) 0;
-  letter-spacing: var(--lp-tr-base);
-}
-.lp-subject::before {
-  content: "R E ";
-  color: var(--lp-accent);
-  letter-spacing: var(--lp-tr-wide);
-  font-weight: var(--lp-w-medium);
-  margin-right: 0.25em;
-}
-
-/* The wordmark — "laterna.partners" with blue dot */
-.lp-wordmark {
-  font-family: var(--lp-sans);
-  font-weight: var(--lp-w-book);
-  letter-spacing: 0.02em;
-  color: var(--lp-ink-display);
-  font-size: 1rem;
-}
-.lp-wordmark .dot { color: var(--lp-accent); }
-
-/* Letter signoff — letter-spaced role under a name */
-.lp-signoff-role {
-  font-size: var(--lp-fs-small);
-  text-transform: uppercase;
-  letter-spacing: var(--lp-tr-label);
-  color: var(--lp-mute);
-  font-weight: var(--lp-w-book);
-}
-
-/* Links — inherit colour, hairline underline. No accent blue on text. */
-a.lp-link, .lp-prose a {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid var(--lp-rule);
-  padding-bottom: 1px;
-  transition: border-color var(--lp-dur-base) var(--lp-ease);
-}
-a.lp-link:hover, .lp-prose a:hover {
-  border-color: var(--lp-ink);
-}
-
-/* Hairline rule — the system's only divider */
-.lp-rule {
-  border: 0;
-  border-top: var(--lp-hairline);
-  margin: var(--lp-s-6) 0;
-}
-.lp-rule--accent {
-  border-top: var(--lp-hairline-accent);
-}
-
-/* Prose container — paragraphs of long-form letter-style copy */
-.lp-prose {
-  max-width: var(--lp-measure);
-  color: var(--lp-ink);
-}
-.lp-prose > * + * {
-  margin-top: var(--lp-s-5);
-}
-.lp-prose p {
   margin: 0;
-  font-size: var(--lp-fs-body-lg);
-  line-height: var(--lp-lh-loose);
+  text-wrap: pretty;
+}
+@media (min-width: 720px) {
+  .lp-lede { font-size: 22px; }
 }
 
-/* Buttons — restrained. Single text-link CTA is preferred over a button. */
-.lp-btn {
-  font-family: inherit;
-  font-size: var(--lp-fs-body);
-  font-weight: var(--lp-w-medium);
-  letter-spacing: 0.02em;
-  color: var(--lp-ink-display);
-  background: transparent;
-  border: 1px solid var(--lp-ink-display);
-  border-radius: var(--lp-r-none);
-  padding: 14px 28px;
-  cursor: pointer;
-  transition:
-    background var(--lp-dur-base) var(--lp-ease),
-    color var(--lp-dur-base) var(--lp-ease);
+.lp-small {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--lp-mute-text);
 }
-.lp-btn:hover {
+
+.lp-caption {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lp-mute-text);
+}
+
+.lp-hairline {
+  border: 0;
+  border-top: 1px solid var(--lp-rule);
+  margin: 0;
+}
+
+/* Block images ("sketches"): full width, intrinsic height. Site
+   card art (crossfade layers) overrides height/object-fit locally. */
+.lp-sketch {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* =============================================================
+   Buttons
+   Primary: ink-display fill, white text. Secondary: hairline
+   --lp-control border, ink text. Link: text only, 12px vertical
+   padding so the tap target still clears 44px. 48px tall, radius
+   0, no lift, no shadow.                                        */
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 24px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-decoration: none;
+  border-radius: 0;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--lp-dur-base) var(--lp-ease),
+    color var(--lp-dur-base) var(--lp-ease),
+    border-color var(--lp-dur-base) var(--lp-ease);
+}
+.lp-btn:active { transform: translateY(1px); transition-duration: var(--lp-dur-fast); }
+.lp-btn[disabled] { opacity: 0.4; pointer-events: none; }
+
+.lp-btn-primary {
   background: var(--lp-ink-display);
   color: var(--lp-paper);
-}
-.lp-btn:active { opacity: 0.85; }
-
-.lp-btn--ghost {
-  border-color: var(--lp-rule);
-  color: var(--lp-ink);
-}
-.lp-btn--ghost:hover {
-  background: transparent;
-  color: var(--lp-ink-display);
   border-color: var(--lp-ink-display);
 }
+.lp-btn-primary:hover { background: var(--lp-ink); border-color: var(--lp-ink); color: var(--lp-paper); }
 
-/* Inline text link styled as a CTA — preferred over a boxed button */
-.lp-cta {
-  display: inline-block;
-  font-size: var(--lp-fs-body);
-  font-weight: var(--lp-w-medium);
+.lp-btn-secondary {
+  background: transparent;
   color: var(--lp-ink-display);
-  text-decoration: none;
-  border-bottom: 1px solid var(--lp-ink-display);
-  padding-bottom: 2px;
-  transition: opacity var(--lp-dur-base) var(--lp-ease);
+  border-color: var(--lp-control);
 }
-.lp-cta:hover { opacity: 0.6; }
+.lp-btn-secondary:hover { background: var(--lp-ink-display); border-color: var(--lp-ink-display); color: var(--lp-paper); }
 
-/* Form inputs — minimal. Hairline underline, no boxes. */
+.lp-btn-link {
+  display: inline-flex;
+  align-items: center;
+  height: auto;
+  padding: 12px 0;
+  background: none;
+  border: 0;
+  color: var(--lp-ink-display);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--lp-rule);
+  text-underline-offset: 3px;
+}
+.lp-btn-link:hover { text-decoration-color: var(--lp-ink-display); }
+
+/* =============================================================
+   Form fields
+   ============================================================= */
+.lp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lp-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--lp-ink-display);
+  line-height: 1.4;
+}
+
 .lp-input {
   appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid var(--lp-rule);
+  border-bottom: 1px solid var(--lp-control);
   border-radius: 0;
-  padding: 12px 0;
+  height: 48px;
+  padding: 0;
   font: inherit;
+  font-size: 17px;
+  line-height: 1.4;
   color: var(--lp-ink);
   width: 100%;
-  transition: border-color var(--lp-dur-base) var(--lp-ease);
+  transition: border-color var(--lp-dur-fast) var(--lp-ease), border-bottom-width var(--lp-dur-fast) var(--lp-ease);
 }
-.lp-input::placeholder { color: var(--lp-mute); }
+.lp-input::placeholder { color: var(--lp-mute-text); opacity: 1; }
+.lp-input:hover { border-bottom-color: var(--lp-ink-display); }
 .lp-input:focus {
   outline: none;
-  border-bottom-color: var(--lp-ink);
+  border-bottom: 2px solid var(--lp-ink-display);
+  padding-bottom: 0;
+  margin-bottom: -1px;
 }
-.lp-input--boxed {
-  border: 1px solid var(--lp-rule);
-  padding: 12px 14px;
+
+.lp-textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--lp-control);
+  border-radius: 0;
+  min-height: 120px;
+  padding: 12px 0;
+  font: inherit;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--lp-ink);
+  width: 100%;
+  resize: vertical;
+  transition: border-color var(--lp-dur-fast) var(--lp-ease);
 }
-.lp-input--boxed:focus { border-color: var(--lp-ink); }
+.lp-textarea::placeholder { color: var(--lp-mute-text); opacity: 1; }
+.lp-textarea:hover { border-bottom-color: var(--lp-ink-display); }
+.lp-textarea:focus {
+  outline: none;
+  border-bottom: 2px solid var(--lp-ink-display);
+  margin-bottom: -1px;
+}
+
+/* Checkbox: 24px box, visible :checked state drawn with a tick in
+   ink-display. Pair with a <label> beside it in the caller's markup:
+   <input type="checkbox" class="lp-checkbox" id="x"><label for="x">…</label> */
+.lp-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border: 1px solid var(--lp-control);
+  background: var(--lp-paper);
+  border-radius: 0;
+  position: relative;
+  cursor: pointer;
+  margin: 0;
+  transition: background-color var(--lp-dur-fast) var(--lp-ease), border-color var(--lp-dur-fast) var(--lp-ease);
+}
+.lp-checkbox:hover { border-color: var(--lp-ink-display); }
+.lp-checkbox:checked {
+  background: var(--lp-ink-display);
+  border-color: var(--lp-ink-display);
+}
+.lp-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 6px; top: 8px;
+  width: 12px; height: 6px;
+  border-left: 2px solid var(--lp-paper);
+  border-bottom: 2px solid var(--lp-paper);
+  transform: rotate(-45deg);
+}
+
+/* Error line: 15px ink, preceded by the plus mark rotated 45deg
+   into a crossed glyph (the same mark the FAQ toggle uses). No new
+   colour: the crossed mark, not red, is what signals the error. */
+.lp-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--lp-ink);
+}
+.lp-error[hidden], .lp-status[hidden] { display: none; }
+.lp-error::before {
+  content: "";
+  flex: none;
+  width: 12px;
+  height: 12px;
+  background: var(--lp-ink-display);
+  clip-path: polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%);
+  transform: rotate(45deg);
+}
+
+/* Status / success line */
+.lp-status {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--lp-ink-display);
+}
+
+/* Turnstile mount point: reserves its height so the layout does not
+   jump when the widget renders in. */
+.lp-turnstile {
+  min-height: 65px;
+}
+
+/* =============================================================
+   Site-type cards (SiteTypes): hairline border; hover/active tints
+   the card and crossfades Today -> With consent (320ms).
+   Markup: <button class="lp-card" aria-pressed="false">
+             <div class="lp-art"><div class="lp-today">…</div><div class="lp-consent">…</div></div>
+             …
+             <div class="lp-seg"><span class="is-active">Today</span><span>With consent</span></div>
+           </button>
+   .lp-today / .lp-consent are absolutely positioned inside .lp-art
+   (which the caller gives position:relative and an aspect-ratio). */
+.lp-card { transition: background-color var(--lp-dur-fast) var(--lp-ease); }
+.lp-card:hover, .lp-card.is-on { background: var(--lp-accent-tint); }
+.lp-art { position: relative; overflow: hidden; }
+.lp-art > .lp-today, .lp-art > .lp-consent { position: absolute; inset: 0; transition: opacity var(--lp-dur-slow) var(--lp-ease); }
+.lp-art > .lp-consent { opacity: 0; }
+.lp-card:hover .lp-art > .lp-today, .lp-card.is-on .lp-art > .lp-today { opacity: 0; }
+.lp-card:hover .lp-art > .lp-consent, .lp-card.is-on .lp-art > .lp-consent { opacity: 1; }
+
+.lp-seg { display: inline-flex; border: 1px solid var(--lp-rule); }
+.lp-seg span {
+  padding: 0 12px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lp-mute-text);
+  transition: color var(--lp-dur-fast) var(--lp-ease), background-color var(--lp-dur-fast) var(--lp-ease);
+}
+.lp-seg span.is-active { color: var(--lp-ink-display); background: var(--lp-paper); }
+
+/* =============================================================
+   FAQ rows: question gets a 1px accent underline on hover; the
+   plus rotates 45deg into a cross when open (180ms); panels use
+   [hidden] so closed answers leave the accessibility tree.      */
+.lp-faq-btn:hover .lp-q {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--lp-accent);
+  text-underline-offset: 4px;
+}
+.lp-faq-btn[aria-expanded="true"] .lp-plus { transform: rotate(45deg); }
+.lp-faq-panel { overflow: hidden; transition: max-height var(--lp-dur-slow) var(--lp-ease); }
+.lp-faq-answer { opacity: 0; transition: opacity var(--lp-dur-base) var(--lp-ease) var(--lp-dur-base); }
+.lp-faq-open .lp-faq-answer { opacity: 1; }
+
+/* Mobile bar cells and channel rows: pressed = accent-tint, 120ms */
+.lp-cell:active, .lp-row:active { background: var(--lp-accent-tint); }
+
+/* =============================================================
+   Drawings: inline SVG at fixed rendered stroke weight.
+   ============================================================= */
+.lp-svg { width: 100%; height: 100%; }
+.lp-svg svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.lp-svg path, .lp-svg line, .lp-svg polyline, .lp-svg polygon, .lp-svg circle, .lp-svg ellipse, .lp-svg rect {
+  vector-effect: non-scaling-stroke;
+}
+
+@keyframes lpDraw { to { stroke-dashoffset: 0; } }
+@keyframes lpFade { to { opacity: 1; } }
+@keyframes lpRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes lpScale { to { transform: scaleX(1); } }
+
+/* Hero draw sequence: begins 200ms after paint; group 1 600ms,
+   group 2 600ms (delay 800ms), group 3 400ms (delay 1400ms), the
+   plot fills 400ms (delay 1800ms), the plus fades 180ms (2200ms). */
+.lp-hero-svg [data-draw] path, .lp-hero-svg [data-draw] line, .lp-hero-svg [data-draw] polyline,
+.lp-hero-svg [data-draw] polygon, .lp-hero-svg [data-draw] circle, .lp-hero-svg [data-draw] ellipse,
+.lp-hero-svg [data-draw] rect {
+  stroke-dasharray: 1; stroke-dashoffset: 1; animation: lpDraw 600ms var(--lp-ease) forwards;
+}
+.lp-svg.lp-hero-svg [data-draw="1"] * { animation-delay: 200ms; }
+.lp-svg.lp-hero-svg [data-draw="2"] * { animation-delay: 800ms; }
+.lp-svg.lp-hero-svg [data-draw="3"] * { animation-duration: 400ms; animation-delay: 1400ms; }
+.lp-hero-svg [data-fill] { opacity: 0; animation: lpFade 400ms var(--lp-ease) 1800ms forwards; }
+.lp-hero-svg [data-plus] { opacity: 0; animation: lpFade 180ms var(--lp-ease) 2200ms forwards; }
+.lp-plot-label { opacity: 0; animation: lpFade 180ms var(--lp-ease) 1900ms forwards; }
+
+/* Step icons draw in over 400ms, staggered 60ms */
+.lp-step-svg [data-draw] * { stroke-dasharray: 1; stroke-dashoffset: 1; animation: lpDraw 400ms var(--lp-ease) forwards; }
+.lp-svg.lp-step-1 [data-draw] * { animation-delay: 300ms; }
+.lp-svg.lp-step-2 [data-draw] * { animation-delay: 360ms; }
+.lp-svg.lp-step-3 [data-draw] * { animation-delay: 420ms; }
+.lp-svg.lp-step-4 [data-draw] * { animation-delay: 480ms; }
+.lp-svg.lp-step-5 [data-draw] * { animation-delay: 540ms; }
+
+/* "Nothing." fades in over 320ms; the hairline beneath draws
+   across 400ms later; the four items rise, staggered 60ms.      */
+.lp-giant { opacity: 0; animation: lpFade 320ms var(--lp-ease) 200ms forwards; }
+.lp-giant-rule { transform-origin: left center; transform: scaleX(0); animation: lpScale 400ms var(--lp-ease) 600ms forwards; }
+.lp-rise { opacity: 0; animation: lpRise 320ms var(--lp-ease) forwards; }
+.lp-rise-1 { animation-delay: 800ms; }
+.lp-rise-2 { animation-delay: 860ms; }
+.lp-rise-3 { animation-delay: 920ms; }
+.lp-rise-4 { animation-delay: 980ms; }
+
+/* The drawn tick on form success: 400ms */
+.lp-tick-svg [data-draw] * { stroke-dasharray: 1; stroke-dashoffset: 1; animation: lpDraw 400ms var(--lp-ease) 120ms forwards; }
+
+/* Hero sketches (raster): grey street first, then the home fills
+   blue on top.                                                  */
+.lp-hero-sketch { position: relative; }
+.lp-hero-sketch > .lp-sketch-grey { position: absolute; inset: 0; opacity: 0; animation: lpFade 600ms var(--lp-ease) 200ms forwards; width: 100%; height: 100%; object-fit: contain; }
+.lp-hero-sketch > .lp-sketch-blue { position: absolute; inset: 0; opacity: 0; animation: lpFade 400ms var(--lp-ease) 1400ms forwards; width: 100%; height: 100%; object-fit: contain; }
+
+/* Step sketches settle in (fade and 8px rise), staggered 60ms */
+.lp-step-sketch { opacity: 0; animation: lpRise 320ms var(--lp-ease) forwards; }
+.lp-step-sketch-1 { animation-delay: 300ms; }
+.lp-step-sketch-2 { animation-delay: 360ms; }
+.lp-step-sketch-3 { animation-delay: 420ms; }
+.lp-step-sketch-4 { animation-delay: 480ms; }
+.lp-step-sketch-5 { animation-delay: 540ms; }
+
+/* =============================================================
+   Reveal system: the scroll-triggered fade-and-rise.
+   The observer (src/scripts/ui.ts, initReveal()) adds .is-in once,
+   the first time an element with [data-reveal] enters the
+   viewport, and sets --reveal-i (0-5) on siblings inside a
+   [data-reveal-group] so up to six of them stagger 60ms apart.   */
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--lp-dur-slow) var(--lp-ease), transform var(--lp-dur-slow) var(--lp-ease);
+  transition-delay: calc(var(--reveal-i, 0) * 60ms);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =============================================================
+   Skip link: visually hidden until it receives keyboard focus.  */
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  z-index: 1000;
+  transform: translateY(-200%);
+  background: var(--lp-paper);
+  color: var(--lp-ink-display);
+  border: 1px solid var(--lp-ink-display);
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform var(--lp-dur-base) var(--lp-ease);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* =============================================================
+   Reduced motion: every duration collapses to zero, every drawing
+   and reveal shows its finished state.                          */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .lp-hero-svg [data-draw] *, .lp-step-svg [data-draw] *, .lp-tick-svg [data-draw] *, .lp-consent [data-draw] * {
+    stroke-dashoffset: 0 !important;
+  }
+  .lp-hero-svg [data-fill], .lp-hero-svg [data-plus], .lp-plot-label, .lp-giant, .lp-rise,
+  .lp-hero-sketch > .lp-sketch-grey, .lp-hero-sketch > .lp-sketch-blue, .lp-step-sketch {
+    opacity: 1 !important;
+  }
+  .lp-giant-rule { transform: none !important; }
+  .reveal, .reveal.is-in { opacity: 1 !important; transform: none !important; transition-delay: 0s !important; }
+}
+
+/* =============================================================
+   Mobile sticky bar: the page reserves 64px plus the safe-area
+   inset at the bottom under 720px, where StickyCall is shown.    */
+@media (max-width: 719px) {
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* =============================================================
+   Legacy helpers still used by Marginalia.astro / Label.astro
+   and (until replaced) by the pre-rebuild page components.       */
+.lp-mg {
+  display: grid;
+  grid-template-columns: minmax(0, 168px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: baseline;
+}
+@media (max-width: 860px) {
+  .lp-mg { grid-template-columns: 1fr; gap: 16px; }
+}
+.lp-fine { color: var(--lp-mute-text); font-size: var(--lp-fs-small); }

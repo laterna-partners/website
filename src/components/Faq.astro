@@ -1,0 +1,333 @@
+---
+// Questions landowners ask. Fifteen rows in three groups; rows are buttons,
+// answers are panels hidden from the accessibility tree until opened.
+type Entry = { id: string; q: string; a: string };
+type Group = { title: string; entries: Entry[] };
+
+const theOffer: Group = {
+  title: 'The offer',
+  entries: [
+    {
+      id: 'q-genuine',
+      q: 'I received a letter from you. How do I know it is genuine?',
+      a: 'The reference on your letter matches the badge at the top of this page, so you can check the two side by side. I am the founder of Laterna Partners Ltd, company number 11017779, registered in England and Wales. If you prefer another way to check, call the number on your letter, or look up Laterna Partners on LinkedIn.',
+    },
+    {
+      id: 'q-cost',
+      q: 'What does this cost me?',
+      a: 'Nothing, at any stage. The appraisal, the site visit and the planning work are paid for on my side, never by you. I also cover your reasonable legal fees for the option agreement. If planning permission is refused, the option simply lapses, and you have paid for nothing.',
+    },
+    {
+      id: 'q-how-much',
+      q: 'How much could you pay for my land?',
+      a: 'That depends entirely on your site: its size, its access, and what planning policy allows nearby. I do not give a figure until I have researched your plot properly and visited it. Once I have, I put a fixed price to you in writing, before you agree to anything.',
+    },
+    {
+      id: 'q-compare',
+      q: 'I have had other letters and offers. How do I compare them?',
+      a: 'Ask what each offer actually depends on: a fixed price, or a share of profit that can shrink over time. Ask who pays for planning, and what happens if it is refused. Ask whether the person writing to you is easy to reach, and easy to check, the way I hope I am.',
+    },
+    {
+      id: 'q-change-mind',
+      q: 'Can I change my mind?',
+      a: 'Yes, at any point before you sign the option agreement, with no penalty and no explanation needed. After signing, the agreement sets out what each of us has committed to, and I walk you through every line of it on the call and in the note before you sign.',
+    },
+  ],
+};
+
+const theProcess: Group = {
+  title: 'The process',
+  entries: [
+    {
+      id: 'q-solicitor',
+      q: 'Do I need a solicitor?',
+      a: 'Yes, and I would encourage it even if I did not cover the cost. The option agreement is a legal document, and you should have your own advice on it. I work with solicitors on my side, and I pay your reasonable legal fees for reviewing the agreement.',
+    },
+    {
+      id: 'q-how-long',
+      q: 'How long does it take?',
+      a: 'The appraisal takes a few weeks. If the site looks promising, planning permission typically takes 12 to 24 months from when we agree terms. Some sites move faster, some slower, depending on the local authority and the complexity of the application.',
+    },
+    {
+      id: 'q-refused',
+      q: 'What if planning is refused?',
+      a: 'Then the option lapses, and it costs you nothing. You keep the land, free to sell it, develop it yourself, or simply carry on as before. I will tell you honestly if a second attempt is worth making, or if it is time to stop.',
+    },
+    {
+      id: 'q-refused-before',
+      q: 'I was refused planning before. Is there still hope?',
+      a: 'Often, yes. Policy changes, local plans get updated, and a different approach to design can succeed where an earlier one did not. I would want to see the previous refusal and understand the reasons first. A past refusal is rarely the end of the story.',
+    },
+    {
+      id: 'q-green-belt',
+      q: 'My land is in the green belt. Is that a no?',
+      a: 'Not automatically. Green belt policy is restrictive, and most sites will not gain consent. There are recognised exceptions, and edge cases worth checking properly. Send me the details, and I will give you an honest view rather than a hopeful one.',
+    },
+    {
+      id: 'q-build-yourself',
+      q: 'Do you build the houses yourself?',
+      a: 'Sometimes. Sometimes the consented site is sold to a builder who does. Either way your price is fixed in writing before we start, and my own role stays the same: finding the site, agreeing terms with you, and seeing the planning application through to a decision.',
+    },
+  ],
+};
+
+const yourLand: Group = {
+  title: 'Your land',
+  entries: [
+    {
+      id: 'q-still-own',
+      q: 'Do I still own the land while planning is sought?',
+      a: 'Yes, completely. Nothing changes hands until planning permission is granted and you decide to proceed. You can carry on using the land exactly as you do now for as long as the planning process takes. The option agreement does not transfer ownership. It reserves the right to buy later, at the agreed price.',
+    },
+    {
+      id: 'q-home-value',
+      q: 'Will selling part of my garden affect my home’s value?',
+      a: 'It can, in either direction, so it is worth thinking through properly before you decide. A well designed new home next door can be a neutral neighbour, or even an asset, if it is done thoughtfully. I am happy to talk through the specific layout for your garden before you commit to anything.',
+    },
+    {
+      id: 'q-kinds-of-sites',
+      q: 'What kinds of sites are you interested in?',
+      a: 'Mainly under-used land: large gardens, plots behind existing houses, gaps between buildings, and small commercial sites with yards attached. The common thread is potential that is not obvious from the road, but shows up once you look at planning policy. If you are unsure, send me the address.',
+    },
+    {
+      id: 'q-neighbours',
+      q: 'Will my neighbours know?',
+      a: 'Not from me. I treat every enquiry in strict confidence, and I do not discuss your site with neighbours or anyone else. Planning applications become public once submitted, as they are for any development. That stage is well down the line, and entirely your decision to reach.',
+    },
+  ],
+};
+
+// Two columns at 1024 and up: The offer and Your land on the left (nine rows),
+// The process on the right (six rows), so the columns balance.
+const columns: Group[][] = [[theOffer, yourLand], [theProcess]];
+---
+<section id="questions" class="questions">
+  <div class="lp-shell">
+    <div class="sec-grid">
+      <div class="sec-rail">
+        <p class="lp-eyebrow">Questions</p>
+      </div>
+
+      <div class="sec-body">
+        <h2 class="lp-h2">What landowners ask.</h2>
+
+        <div class="faq-cols">
+          {columns.map((column) => (
+            <div class="faq-col">
+              {column.map((group) => (
+                <div class="faq-group" data-reveal>
+                  <p class="lp-eyebrow faq-group-title">{group.title}</p>
+                  <div class="faq-rows">
+                    {group.entries.map((entry) => (
+                      <div class="faq-row" id={entry.id}>
+                        <h3 class="faq-h">
+                          <button
+                            type="button"
+                            class="faq-btn"
+                            aria-expanded="false"
+                            aria-controls={`${entry.id}-panel`}
+                          >
+                            <span class="faq-q">{entry.q}</span>
+                            <svg class="lp-plus faq-plus" width="16" height="16" viewBox="0 0 36 36" aria-hidden="true" focusable="false"><rect x="15" y="0" width="6" height="36"></rect><rect x="0" y="15" width="36" height="6"></rect></svg>
+                          </button>
+                        </h3>
+                        <div class="faq-panel" id={`${entry.id}-panel`} data-faq-panel hidden>
+                          <p class="faq-a">{entry.a}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<noscript>
+  <style>[data-faq-panel] { display: block !important; height: auto !important; }</style>
+</noscript>
+
+<script>
+  // Accordion rows. Panels stay `hidden` (upgraded to hidden="until-found"
+  // where the browser supports it, so find-in-page can still reach a closed
+  // answer) and their height animates over 320ms.
+  const DURATION_GUARD = 600;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const supportsUntilFound = 'onbeforematch' in document.body;
+
+  const rows = Array.from(document.querySelectorAll<HTMLElement>('#questions .faq-row'));
+
+  function parts(row: HTMLElement) {
+    const btn = row.querySelector<HTMLButtonElement>('.faq-btn');
+    const panel = row.querySelector<HTMLElement>('.faq-panel');
+    return { btn, panel };
+  }
+
+  function conceal(panel: HTMLElement) {
+    panel.style.height = '';
+    if (supportsUntilFound) panel.setAttribute('hidden', 'until-found');
+    else panel.setAttribute('hidden', '');
+  }
+
+  function open(row: HTMLElement) {
+    const { btn, panel } = parts(row);
+    if (!btn || !panel || btn.getAttribute('aria-expanded') === 'true') return;
+    btn.setAttribute('aria-expanded', 'true');
+    panel.removeAttribute('hidden');
+    if (reduced.matches) {
+      panel.style.height = '';
+      return;
+    }
+    const target = panel.scrollHeight;
+    panel.style.height = '0px';
+    void panel.offsetHeight;
+    panel.style.height = `${target}px`;
+    const settle = () => {
+      if (btn.getAttribute('aria-expanded') === 'true') panel.style.height = '';
+    };
+    panel.addEventListener('transitionend', function onEnd(e) {
+      if (e.propertyName !== 'height') return;
+      panel.removeEventListener('transitionend', onEnd);
+      settle();
+    });
+    window.setTimeout(settle, DURATION_GUARD);
+  }
+
+  function close(row: HTMLElement) {
+    const { btn, panel } = parts(row);
+    if (!btn || !panel || btn.getAttribute('aria-expanded') !== 'true') return;
+    btn.setAttribute('aria-expanded', 'false');
+    if (reduced.matches) {
+      conceal(panel);
+      return;
+    }
+    panel.style.height = `${panel.scrollHeight}px`;
+    void panel.offsetHeight;
+    panel.style.height = '0px';
+    const settle = () => {
+      if (btn.getAttribute('aria-expanded') === 'false') conceal(panel);
+    };
+    panel.addEventListener('transitionend', function onEnd(e) {
+      if (e.propertyName !== 'height') return;
+      panel.removeEventListener('transitionend', onEnd);
+      settle();
+    });
+    window.setTimeout(settle, DURATION_GUARD);
+  }
+
+  rows.forEach((row) => {
+    const { btn, panel } = parts(row);
+    if (!btn || !panel) return;
+    if (supportsUntilFound) panel.setAttribute('hidden', 'until-found');
+    btn.addEventListener('click', () => {
+      if (btn.getAttribute('aria-expanded') === 'true') close(row);
+      else open(row);
+    });
+    // Find-in-page reached a closed answer: keep the button in step.
+    panel.addEventListener('beforematch', () => {
+      btn.setAttribute('aria-expanded', 'true');
+      panel.style.height = '';
+    });
+  });
+
+  function openFromHash() {
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    const row = rows.find((r) => r.id === id);
+    if (row) open(row);
+  }
+
+  openFromHash();
+  window.addEventListener('hashchange', openFromHash);
+</script>
+
+<style>
+  .questions {
+    padding: 64px 0;
+    background: var(--lp-accent-tint, #F4F9FD);
+  }
+
+  .sec-grid { display: flex; flex-direction: column; gap: 24px; }
+  .sec-body { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
+
+  .faq-cols { display: flex; flex-direction: column; gap: 48px; }
+  .faq-col { display: flex; flex-direction: column; gap: 48px; min-width: 0; }
+  .faq-group { display: flex; flex-direction: column; gap: 16px; }
+  .faq-group-title { margin: 0; }
+
+  .faq-row { border-bottom: 1px solid var(--lp-rule); }
+  .faq-h { margin: 0; font: inherit; font-weight: inherit; }
+
+  .faq-btn {
+    appearance: none;
+    background: none;
+    border: 0;
+    width: 100%;
+    min-height: 56px;
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  .faq-q {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--lp-ink-display);
+  }
+  .faq-plus {
+    flex: none;
+    fill: var(--lp-ink-display);
+    transition: transform 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+  .faq-btn[aria-expanded='true'] .faq-plus { transform: rotate(45deg); }
+  .faq-btn:hover .faq-q {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--lp-rule);
+    text-underline-offset: 4px;
+  }
+
+  .faq-panel {
+    overflow: hidden;
+    transition: height 320ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+  /* `hidden` must win over any display rule on the panel. */
+  .faq-panel[hidden] { display: none; }
+  .faq-a {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--lp-ink);
+    max-width: 48ch;
+    margin: 0;
+    padding: 0 0 24px;
+    text-wrap: pretty;
+  }
+
+  @media (min-width: 720px) {
+    .questions { padding: 96px 0; }
+    .faq-q { font-size: 18px; }
+  }
+
+  @media (min-width: 1024px) {
+    .questions { padding: 128px 0; }
+    .sec-grid { flex-direction: row; align-items: flex-start; gap: 32px; }
+    .sec-rail { flex: 0 0 200px; }
+    .sec-body { flex: 1 1 auto; gap: 48px; }
+    .faq-cols { flex-direction: row; align-items: flex-start; gap: 48px; }
+    .faq-col { flex: 1 1 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-plus, .faq-panel { transition: none; }
+  }
+</style>

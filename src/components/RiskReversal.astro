@@ -1,90 +1,188 @@
 ---
-import Section from './Section.astro';
-import Marginalia from './Marginalia.astro';
-import Label from './Label.astro';
-
-const REVERSAL_ITEMS = [
-  { eyebrow: 'No fee', body: 'You do not pay for the planning work, the time, or anything else. Ever.' },
-  { eyebrow: 'No obligation', body: 'You are free to walk away at any point, for any reason, with no penalty.' },
-  { eyebrow: 'No pressure', body: 'You see the agreed price before signing anything. The choice is yours.' },
-  { eyebrow: 'No publicity', body: 'Every enquiry is treated in strict confidence. No mailing lists, no sharing.' },
+// The question everyone asks, answered in one word.
+const ITEMS = [
+  { label: 'No fee', body: 'You do not pay for the planning work, the time, or anything else. Ever.' },
+  { label: 'No obligation', body: 'You are free to walk away at any point, for any reason, with no penalty.' },
+  { label: 'No pressure', body: 'You see the agreed price before signing anything. The choice is yours.' },
+  { label: 'No publicity', body: 'Every enquiry is treated in strict confidence. No mailing lists, no sharing.' },
 ];
 ---
-<Section id="risk" style="padding-top: 96px; padding-bottom: 104px;">
-  <Marginalia label="What's the catch?" sub="The thing every landowner asks.">
-    <div class="risk-wrap">
-      <h2 class="risk-question">What you give up by getting in touch.</h2>
-      <div class="risk-answer">Nothing.</div>
-
-      <hr class="risk-rule" />
-
-      <div class="risk-grid">
-        {REVERSAL_ITEMS.map((item) => (
-          <div class="risk-item">
-            <Label asTag="div">{item.eyebrow}</Label>
-            <p class="risk-body">{item.body}</p>
-          </div>
-        ))}
+<section id="catch" class="lp-section catch">
+  <div class="lp-shell">
+    <div class="catch-body">
+      <div class="catch-rail">
+        <p class="lp-eyebrow">What’s the catch?</p>
       </div>
 
-      <p class="risk-coda">
-        The land remains yours throughout, and remains yours unless you actively decide to
-        proceed at a price you are happy with.
-      </p>
+      <div class="catch-main">
+        
+        <div class="catch-answer" data-catch>
+          <h2 class="lp-h2 catch-question">What you give up by getting in touch.</h2>
+          <p class="catch-giant">Nothing.</p>
+          <div class="catch-rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="catch-grid" data-reveal-group>
+          {ITEMS.map((item) => (
+            <div class="catch-item" data-reveal>
+              <p class="catch-item-label">{item.label}</p>
+              <p class="catch-item-body">{item.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <p class="catch-close">
+          The land stays yours. It changes hands only if you decide to proceed, at a price you
+          agreed.
+        </p>
+      </div>
     </div>
-  </Marginalia>
-</Section>
+  </div>
+</section>
+
+<script>
+  // Self-contained: the hairline should draw when the answer comes into view,
+  // and the finished state is what you get with no JS and with reduced motion.
+  const blocks = document.querySelectorAll<HTMLElement>('[data-catch]');
+  if (blocks.length) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduced && 'IntersectionObserver' in window) {
+      blocks.forEach((block) => block.classList.add('is-armed'));
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-drawn');
+            observer.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.15 }
+      );
+      blocks.forEach((block) => observer.observe(block));
+    }
+  }
+</script>
 
 <style>
-  .risk-wrap { max-width: 52rem; }
-  .risk-question {
-    font-size: clamp(20px, 2.4vw, 24px);
-    line-height: 1.4;
-    font-weight: 400;
-    color: var(--lp-ink);
-    margin: 0;
-    letter-spacing: 0;
-    text-wrap: balance;
-    max-width: 34ch;
+  .catch {
+    background: var(--lp-accent-tint, var(--lp-paper-soft));
   }
-  .risk-answer {
-    margin-top: 16px;
-    font-size: clamp(72px, 14vw, 168px);
-    line-height: 0.95;
-    font-weight: 300;
-    letter-spacing: -0.04em;
-    color: var(--lp-ink-display);
-  }
-  .risk-rule {
-    border: 0;
-    border-top: 1px solid var(--lp-rule);
-    margin: 40px 0 32px;
-  }
-  .risk-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 40px 56px;
-    max-width: 56rem;
-  }
-  .risk-item {
+  .catch-body {
+    padding: 64px 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 24px;
   }
-  .risk-body {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--lp-ink);
+  .catch-main {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .catch-answer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .catch-question {
     margin: 0;
-    max-width: 32ch;
+    max-width: 24ch;
+    text-wrap: balance;
   }
-  .risk-coda {
-    margin-top: 40px;
-    font-size: 17px;
-    line-height: 1.7;
-    color: var(--lp-ink);
-    max-width: 54ch;
-    font-style: italic;
+  .catch-giant {
+    margin: 0;
+    font-size: clamp(64px, 21vw, 200px);
+    font-weight: 200;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--lp-ink-display);
+    max-width: none;
+    /* line-height 0.95 crops the descender, so make room under it */
+    padding-bottom: 0.12em;
+  }
+  .catch-rule {
+    width: 100%;
+    height: 1px;
+    background: var(--lp-rule);
+  }
+
+  /* The draw only arms itself when the script runs and motion is welcome. */
+  .catch-answer.is-armed .catch-rule {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  .catch-answer.is-armed.is-drawn .catch-rule {
+    animation: catch-draw 400ms var(--lp-ease, ease) 160ms forwards;
+  }
+  @keyframes catch-draw {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .catch-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .catch-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .catch-item-label {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lp-ink-display);
+  }
+  .catch-item-body {
+    margin: 0;
+    max-width: 40ch;
+  }
+
+  .catch-close {
+    margin: 0;
+    font-size: clamp(20px, 2.2vw, 22px);
     font-weight: 300;
+    line-height: 1.5;
+    color: var(--lp-ink);
+    max-width: 52ch;
+  }
+
+  @media (min-width: 720px) {
+    .catch-body {
+      padding: 96px 0;
+    }
+    .catch-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 32px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .catch-body {
+      padding: 128px 0;
+      display: grid;
+      grid-template-columns: 200px minmax(0, 1fr);
+      column-gap: 32px;
+      align-items: start;
+    }
+    .catch-main {
+      gap: 48px;
+    }
+    .catch-answer {
+      gap: 24px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .catch-rule {
+      transform: none;
+      animation: none;
+    }
   }
 </style>

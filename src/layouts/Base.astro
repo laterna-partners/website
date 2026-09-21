@@ -1,5 +1,8 @@
 ---
-// Base layout — head, fonts, design tokens, mobile sticky-call spacing.
+// Base layout: head, fonts, design tokens, mobile sticky-call spacing.
+// Note: the page itself wraps its content in <main id="main-content">
+// (see src/pages/landowners.astro); this layout must not add a second
+// <main>. The skip link that targets it is added by SiteHeader, not here.
 export interface Props {
   title?: string;
   description?: string;
@@ -7,12 +10,14 @@ export interface Props {
 }
 
 const {
-  title = 'Laterna+Partners — for landowners',
-  description = 'A fixed-price offer for your land, conditional on planning permission. We cover the planning work and take the risk. You see the number before agreeing anything.',
+  title = 'Laterna+Partners: a fixed-price offer for your land',
+  description = 'A fixed-price offer for your land, subject to planning permission. I pay for the planning work and take the risk. You see the number before agreeing anything.',
   canonical,
 } = Astro.props;
 
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'https://laterna.partners').toString();
+const site = Astro.site ?? 'https://laterna.partners';
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site).toString();
+const ogImageUrl = new URL('/assets/og-image.png', site).toString();
 ---
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -23,15 +28,39 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'htt
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/assets/favicon.svg" />
+    <link
+      rel="preload"
+      href="/fonts/Mulish-VariableFont_wght.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="theme-color" content="#FFFFFF" />
     <meta name="robots" content="index, follow" />
   </head>
   <body id="top">
     <slot />
+    <script>
+      import { initReveal, initHeroWatch } from '../scripts/ui';
+
+      function boot() {
+        initReveal();
+        initHeroWatch();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+      } else {
+        boot();
+      }
+    </script>
   </body>
 </html>
 
@@ -41,13 +70,6 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'htt
   html, body { background: var(--lp-paper); }
   html { overflow-x: hidden; }
   body {
-    color: var(--lp-ink);
-    font-family: var(--lp-sans);
-    font-size: var(--lp-fs-body-lg);
-    line-height: var(--lp-lh-loose);
-    font-weight: 400;
-    margin: 0;
-    padding-bottom: env(safe-area-inset-bottom, 0);
     /* Belt-and-braces guard: nothing in the layout should ever cause a
        horizontal scrollbar on mobile. If something does, it gets clipped
        rather than triggering a horizontal scroll. */
@@ -57,62 +79,4 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'htt
   /* Every direct media element gets a hard cap to avoid intrinsic-size
      overflow on narrow viewports. */
   img, svg, video { max-width: 100%; height: auto; }
-
-  .lp-shell {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 32px;
-    box-sizing: border-box;
-  }
-  @media (max-width: 720px) {
-    .lp-shell { padding: 0 22px; }
-  }
-
-  .lp-section {
-    border-bottom: 1px solid var(--lp-rule);
-  }
-  .lp-section:last-of-type { border-bottom: 0; }
-
-  .lp-mg {
-    display: grid;
-    grid-template-columns: minmax(0, 168px) minmax(0, 1fr);
-    gap: 32px;
-    align-items: baseline;
-  }
-  @media (max-width: 860px) {
-    .lp-mg {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-  }
-
-  .lp-fine { color: var(--lp-mute); font-size: var(--lp-fs-small); }
-
-  /* room for mobile sticky bar */
-  @media (max-width: 720px) {
-    body { padding-bottom: 88px; }
-
-    /* All sections share a tighter vertical rhythm on mobile.
-       Inline-style overrides on individual sections still win for the
-       Hero (which has its own mobile override), but the default lp-section
-       padding here is the right baseline for everything else. */
-    .lp-section {
-      padding-top: 56px !important;
-      padding-bottom: 56px !important;
-    }
-
-    /* Form / item grids that use auto-fit need an explicit single-column
-       lock on mobile — auto-fit can otherwise resolve to >1 column when
-       the page renders at sizes where the browser's grid track sizing
-       picks up intrinsic widths from inputs / placeholders. */
-    .note-form,
-    .contact-form,
-    .risk-grid,
-    .how-grid {
-      grid-template-columns: 1fr !important;
-    }
-
-    /* Tighten typography that overshoots on narrow screens */
-    .risk-answer { font-size: clamp(56px, 18vw, 96px) !important; }
-  }
 </style>

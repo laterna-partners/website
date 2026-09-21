@@ -1,29 +1,63 @@
 ---
 export const prerender = false;
 import Base from '../layouts/Base.astro';
-import RefStrip from '../components/RefStrip.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import Hero from '../components/Hero.astro';
+import BeforeYouReadOn from '../components/BeforeYouReadOn.astro';
 import HowItWorks from '../components/HowItWorks.astro';
 import RiskReversal from '../components/RiskReversal.astro';
+import SiteTypes from '../components/SiteTypes.astro';
 import AboutHayri from '../components/AboutHayri.astro';
-import TakeHomeNote from '../components/TakeHomeNote.astro';
+import Faq from '../components/Faq.astro';
 import Contact from '../components/Contact.astro';
+import TakeHomeNote from '../components/TakeHomeNote.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import StickyCall from '../components/StickyCall.astro';
 
+// The middleware validates the reference and upper-cases it, and looks up the
+// site hint, so both arrive here ready to use.
 const ref = Astro.locals.ref ?? null;
 const siteHint = Astro.locals.siteHint ?? null;
+
+const title = 'Laterna+Partners: a fixed-price offer for your land';
+const description =
+  'A fixed-price offer for your land, subject to planning permission. I pay for the planning work and take the risk. You see the number before agreeing anything.';
 ---
-<Base>
-  <RefStrip refValue={ref} />
+<Base title={title} description={description}>
   <SiteHeader />
-  <Hero siteHint={siteHint} />
-  <HowItWorks />
-  <RiskReversal />
-  <AboutHayri showPortrait={true} />
-  <TakeHomeNote available={true} />
-  <Contact showForm={true} />
+
+  <main id="main-content" data-ref={ref ?? undefined}>
+    <Hero ref={ref} siteHint={siteHint} />
+    <BeforeYouReadOn />
+    <HowItWorks />
+    <RiskReversal />
+    <SiteTypes />
+    <AboutHayri />
+    <Faq />
+    <Contact ref={ref}>
+      <TakeHomeNote ref={ref} />
+    </Contact>
+  </main>
+
   <SiteFooter />
-  <StickyCall />
+  <StickyCall ref={ref} />
 </Base>
+
+<script>
+  // One delegated listener for every call, WhatsApp and email link on the
+  // page (channel rows, footer, sticky bar). Fire and forget: the click is
+  // never held up by it.
+  import { sendClick } from '../lib/form-client';
+
+  const refValue = document.getElementById('main-content')?.dataset.ref || undefined;
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as Element | null;
+    const link = target?.closest?.('[data-click]');
+    if (!link) return;
+    const channel = link.getAttribute('data-click');
+    if (channel === 'call' || channel === 'whatsapp' || channel === 'email') {
+      sendClick(channel, refValue);
+    }
+  });
+</script>
