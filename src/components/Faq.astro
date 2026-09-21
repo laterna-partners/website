@@ -97,9 +97,9 @@ const yourLand: Group = {
   ],
 };
 
-// Two columns at 1024 and up: the first two groups on the left, the third on
-// the right. Stacked in the same order below that.
-const columns: Group[][] = [[theOffer, theProcess], [yourLand]];
+// Two columns at 1024 and up: The offer and Your land on the left (nine rows),
+// The process on the right (six rows), so the columns balance.
+const columns: Group[][] = [[theOffer, yourLand], [theProcess]];
 ---
 <section id="questions" class="questions">
   <div class="lp-shell">

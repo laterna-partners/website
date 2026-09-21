@@ -20,7 +20,7 @@ export const GET: APIRoute = async ({ request }) => {
   }
 
   const ip = getClientIp(request);
-  if (!checkRateLimit(ip)) {
+  if (!checkRateLimit(`token:${ip}`, 30)) {
     return jsonResponse(429, { ok: false, error: 'rate_limited' });
   }
 

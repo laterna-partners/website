@@ -504,6 +504,7 @@ a:hover { text-decoration-color: var(--lp-accent); }
   line-height: 1.4;
   color: var(--lp-ink);
 }
+.lp-error[hidden], .lp-status[hidden] { display: none; }
 .lp-error::before {
   content: "";
   flex: none;
