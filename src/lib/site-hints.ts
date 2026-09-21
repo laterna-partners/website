@@ -15,7 +15,7 @@ export const SITE_HINTS: Record<string, string> = {
   'SITE-26-0418': 'the two-acre paddock east of Pilgrims Lane',
 };
 
-const LOOKUP_TIMEOUT_MS = 800;
+const LOOKUP_TIMEOUT_MS = 1_500;
 
 export async function lookupSiteHint(ref: string | null | undefined): Promise<string | null> {
   if (!ref) return null;

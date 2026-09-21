@@ -5,6 +5,7 @@ import type { APIRoute } from 'astro';
 import { getSupabase } from '../../lib/supabase';
 import { getClientIp, checkRateLimit, isAllowedOrigin } from '../../lib/form-guard';
 import { recordContactIntent } from '../../lib/attio';
+import { waitUntil } from '@vercel/functions';
 
 export const prerender = false;
 
@@ -48,17 +49,19 @@ export const POST: APIRoute = async ({ request }) => {
   if (supabase) {
     const userAgent = request.headers.get('user-agent') ?? null;
     const path = new URL(request.url).pathname;
-    supabase
-      .from('click_events')
-      .insert({ channel, ref, path, user_agent: userAgent })
-      .then(({ error }) => {
-        if (error) console.error('[click_events] insert failed', error.message);
-      });
+    waitUntil(
+      supabase
+        .from('click_events')
+        .insert({ channel, ref, path, user_agent: userAgent })
+        .then(({ error }) => {
+          if (error) console.error('[click_events] insert failed', error.message);
+        }),
+    );
   }
 
   // Best-effort CRM mirror: the deal for this reference gets a readable
   // "call, 22 Sep 2026, 14:05" line. Not awaited; never throws.
-  if (ref) recordContactIntent(channel as 'call' | 'whatsapp' | 'email', ref);
+  if (ref) waitUntil(recordContactIntent(channel as 'call' | 'whatsapp' | 'email', ref));
 
   return noContent();
 };
