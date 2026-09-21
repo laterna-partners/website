@@ -13,10 +13,8 @@ const isLetter = Boolean(ref);
 const hint = siteHint ? siteHint.trim().replace(/\.$/, '') : null;
 
 const headline = !isLetter
-  ? 'A fixed-price offer for your land, subject to planning.'
-  : hint
-    ? `I wrote to you about ${hint}.`
-    : 'I wrote to you about your land.';
+  ? 'A fixed-price offer for your land.'
+  : 'I wrote to you about your land.';
 
 const subLede = isLetter
   ? 'This page is here because you scanned the QR code on my letter. It is the same explanation I would give over the phone, set down so you can read it in your own time.'
@@ -39,9 +37,11 @@ const subLede = isLetter
       <h1 class="lp-h1 hero-head">{headline}</h1>
 
       <div class="hero-body">
+        {isLetter && hint && <p class="hero-hint">Your letter was about {hint}.</p>}
         <p class="lp-lede hero-lede">
           I pay for the planning work and take the risk that goes with it. The price is fixed in
-          writing before you agree to anything, and you are free to say no.
+          writing before you agree to anything, and paid if planning permission is granted. You are
+          free to say no at any point.
         </p>
 
         <p class="hero-sub-lede">{subLede}</p>
@@ -195,6 +195,13 @@ const subLede = isLetter
     display: flex;
     flex-direction: column;
     gap: 24px;
+  }
+  .hero-hint {
+    margin: 0 0 16px;
+    font-size: 18px;
+    line-height: 1.5;
+    font-weight: 500;
+    color: var(--lp-ink-display);
   }
   .hero-lede {
     margin: 0;
