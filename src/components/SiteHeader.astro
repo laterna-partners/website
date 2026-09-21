@@ -1,59 +1,176 @@
 ---
+// Site header. Desktop (720px and up): wordmark, section nav, and the
+// reveal-and-copy "Call Hayri" button. The number is never a tel: link here,
+// because a desktop tap on tel: opens nothing useful. Mobile: wordmark and a
+// decorative plus mark only, no menu.
+// Sticky styling is driven by body.is-past-hero, toggled by the observer in
+// the foundations layer (it watches [data-hero-actions] in the Hero).
 ---
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
 <header class="site-header">
   <div class="lp-shell header-row">
-    <a href="#top" aria-label="Laterna+Partners — back to top" class="logo-link">
+    <a class="logo-link" href="#top" aria-label="Laterna+Partners, back to the top of the page">
       <img
+        class="logo-img"
         src="/assets/laterna-logo-mark.png"
         alt="Laterna+Partners"
-        width="146"
-        height="36"
+        width="449"
+        height="111"
       />
     </a>
 
-    <nav class="site-nav">
-      <a href="#how" class="lp-nav-link">How this works</a>
-      <a href="#about" class="lp-nav-link">About</a>
-      <a href="#contact" class="lp-nav-link">Get in touch</a>
-    </nav>
+    <span class="header-mark" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 36 36" focusable="false">
+        <rect x="15" y="0" width="6" height="36" fill="currentColor"></rect>
+        <rect x="0" y="15" width="36" height="6" fill="currentColor"></rect>
+      </svg>
+    </span>
+
+    <div class="header-right">
+      <nav class="lp-nav header-nav" aria-label="Sections of this page">
+        <a href="#how">How it works</a>
+        <a href="#about">About</a>
+        <a href="#questions">Questions</a>
+      </nav>
+
+      <div class="header-call">
+        <button type="button" class="lp-btn lp-btn-primary" data-phone-reveal="header">
+          <span>Call Hayri</span>
+          <span class="ph-num" hidden>+44 7471 127212</span>
+        </button>
+        <span class="ph-status lp-small" role="status" aria-live="polite"></span>
+      </div>
+    </div>
   </div>
 </header>
 
+<script>
+  import { copyText } from '../scripts/ui';
+
+  const PHONE = '+44 7471 127212';
+
+  document
+    .querySelectorAll<HTMLButtonElement>('[data-phone-reveal="header"]')
+    .forEach((button) => {
+      const number = button.querySelector<HTMLElement>('.ph-num');
+      const status = button.parentElement?.querySelector<HTMLElement>('.ph-status') ?? null;
+      let timer = 0;
+
+      button.addEventListener('click', async () => {
+        if (number) number.hidden = false;
+        const copied = await copyText(PHONE);
+        if (!status) return;
+        status.textContent = copied === false ? '' : 'Copied';
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          status.textContent = '';
+        }, 4000);
+      });
+    });
+</script>
+
 <style>
-  .site-header { border-bottom: 1px solid var(--lp-rule); }
+  .site-header {
+    background: var(--lp-paper);
+    border-bottom: 1px solid var(--lp-rule);
+  }
+
   .header-row {
-    padding-top: 22px;
-    padding-bottom: 22px;
+    height: 64px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     gap: 16px;
   }
+
   .logo-link {
     display: inline-flex;
     align-items: center;
     text-decoration: none;
+    border: 0;
   }
-  .logo-link img {
+  .logo-img {
     display: block;
-    height: 36px;
-    width: auto;
+    width: 120px;
+    height: auto;
   }
-  .site-nav {
+
+  /* Mobile only: a decorative mark, not a control. */
+  .header-mark {
+    display: inline-flex;
+    color: var(--lp-accent);
+  }
+
+  .header-right {
+    display: none;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .header-nav {
     display: flex;
     align-items: center;
     gap: 28px;
-    font-size: 14px;
   }
-  .lp-nav-link {
-    color: var(--lp-ink);
-    text-decoration: none;
-    padding-bottom: 2px;
-    border-bottom: 1px solid transparent;
-    transition: border-color 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  .header-nav a {
+    font-size: 16px;
+    padding: 12px 0;
   }
-  .lp-nav-link:hover { border-bottom-color: var(--lp-rule); }
-  @media (max-width: 720px) {
-    .lp-nav-link { display: none; }
+
+  .header-call {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ph-num {
+    font-variant-numeric: tabular-nums;
+  }
+  .ph-status {
+    min-width: 58px;
+  }
+
+  @media (min-width: 720px) {
+    .header-row {
+      height: 81px;
+    }
+    .logo-img {
+      width: 146px;
+    }
+    .header-mark {
+      display: none;
+    }
+    .header-right {
+      display: flex;
+    }
+
+    /* The header rides along from the first scroll, and the hairline and the
+       soft paper fill only arrive once the hero actions have left the view. */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      border-bottom-color: transparent;
+      transition: border-color 180ms var(--lp-ease, ease), background-color 180ms var(--lp-ease, ease);
+    }
+  }
+
+  @media (min-width: 720px) {
+    :global(body.is-past-hero) .site-header {
+      border-bottom-color: var(--lp-rule);
+      background: var(--lp-paper);
+    }
+    :global(body.is-past-hero) .header-row {
+      height: 64px;
+    }
+  }
+
+  @media (min-width: 860px) {
+    .header-nav {
+      gap: 32px;
+    }
+    .header-right {
+      gap: 48px;
+    }
   }
 </style>

@@ -1,0 +1,366 @@
+---
+// What I look for: four kinds of site, each shown as it is today and as it
+// could be with planning consent. The comparison is driven by two real
+// buttons, never by hover, so it works on a phone and from the keyboard.
+const CARDS = [
+  {
+    id: 'garden',
+    title: 'Large gardens',
+    sketch: 'site-garden',
+    width: 438,
+    height: 584,
+    today: 'A large garden, more lawn than anyone has time to enjoy.',
+    consent: 'Space for one or two new homes, with your own house untouched.',
+    start: 'consent',
+  },
+  {
+    id: 'backland',
+    title: 'Land behind houses',
+    sketch: 'site-backland',
+    width: 414,
+    height: 552,
+    today: 'A patch of land behind the house, reached by a side passage or shared access.',
+    consent: 'A new home on land that was never really part of the garden you use.',
+    start: 'today',
+  },
+  {
+    id: 'infill',
+    title: 'Gaps between buildings',
+    sketch: 'site-infill',
+    width: 369,
+    height: 492,
+    today: 'A gap between buildings, too narrow to do anything with on its own.',
+    consent: 'A single, well designed home that finally makes use of the space.',
+    start: 'today',
+  },
+  {
+    id: 'commercial',
+    title: 'Small commercial buildings and yards',
+    sketch: 'site-commercial',
+    width: 405,
+    height: 540,
+    today: 'A small shop, workshop or yard, doing modest business on valuable land.',
+    consent: 'New homes above or alongside the business, or in place of it.',
+    start: 'today',
+  },
+];
+---
+<section id="sites" class="lp-section">
+  <div class="lp-shell">
+    <div class="types-body">
+      <div class="types-rail">
+        <p class="lp-eyebrow">What I look for</p>
+      </div>
+
+      <div class="types-main">
+        <div class="types-intro">
+          <h2 class="lp-h2 types-head">The kinds of sites I look at.</h2>
+          <p class="lp-lede types-lede">
+            Every site is different, but most fall into one of four kinds.
+          </p>
+        </div>
+
+        <ul class="types-grid" data-reveal-group>
+          {CARDS.map((card) => {
+            const onConsent = card.start === 'consent';
+            return (
+              <li class="type-card" data-state={card.start} data-reveal>
+                <figure class="type-figure">
+                  <div class="type-frame">
+                    <img
+                      class="type-layer type-layer-today"
+                      src={`/assets/sketches/${card.sketch}-today.webp`}
+                      alt=""
+                      width={card.width}
+                      height={card.height}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <img
+                      class="type-layer type-layer-consent"
+                      src={`/assets/sketches/${card.sketch}-consent.webp`}
+                      alt=""
+                      width={card.width}
+                      height={card.height}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <figcaption class="lp-caption type-illustrative">Illustrative</figcaption>
+                </figure>
+
+                <h3 class="type-title" id={`type-${card.id}-title`}>{card.title}</h3>
+
+                <div class="type-captions">
+                  <p class="type-caption" data-caption="today" hidden={onConsent}>{card.today}</p>
+                  <p class="type-caption" data-caption="consent" hidden={!onConsent}>
+                    {card.consent}
+                  </p>
+                </div>
+
+                <div class="type-controls">
+                  {onConsent && <p class="type-hint">Tap Today to compare</p>}
+
+                  <div class="type-seg" role="group" aria-labelledby={`type-${card.id}-title`}>
+                    <button
+                      type="button"
+                      class="type-seg-btn"
+                      data-seg="today"
+                      aria-pressed={onConsent ? 'false' : 'true'}
+                    >Today</button>
+                    <button
+                      type="button"
+                      class="type-seg-btn"
+                      data-seg="consent"
+                      aria-pressed={onConsent ? 'true' : 'false'}
+                    >With consent</button>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+
+        <p class="types-close">
+          <a href="#contact" class="lp-btn-link"
+            >Not sure? Send me the address and I will tell you either way.</a
+          >
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.type-card').forEach((card) => {
+    const buttons = card.querySelectorAll<HTMLButtonElement>('.type-seg-btn');
+    const captions = card.querySelectorAll<HTMLElement>('.type-caption');
+    const hint = card.querySelector<HTMLElement>('.type-hint');
+
+    const setState = (next: string) => {
+      if (card.dataset.state === next) return;
+      card.dataset.state = next;
+      buttons.forEach((button) => {
+        button.setAttribute('aria-pressed', button.dataset.seg === next ? 'true' : 'false');
+      });
+      captions.forEach((caption) => {
+        caption.hidden = caption.dataset.caption !== next;
+      });
+      if (hint) hint.hidden = true;
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => setState(button.dataset.seg ?? 'today'));
+    });
+  });
+</script>
+
+<style>
+  .types-body {
+    padding: 64px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .types-main {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .types-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .types-head {
+    margin: 0;
+    font-size: clamp(28px, 3.4vw, 44px);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--lp-ink-display);
+    text-wrap: balance;
+  }
+  .types-lede {
+    margin: 0;
+    max-width: 52ch;
+  }
+
+  .types-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  .type-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    box-sizing: border-box;
+    border: 1px solid var(--lp-rule);
+    background: var(--lp-paper);
+    transition: background-color 120ms var(--lp-ease, ease);
+  }
+  /* Hover may tint the card. It must never change which drawing is showing. */
+  .type-card:hover {
+    background: var(--lp-accent-tint, var(--lp-paper-soft));
+  }
+
+  .type-figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 260px;
+    align-self: center;
+  }
+  .type-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+  }
+  .type-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity 320ms var(--lp-ease, ease);
+  }
+  .type-card[data-state='today'] .type-layer-today,
+  .type-card[data-state='consent'] .type-layer-consent {
+    opacity: 1;
+  }
+  .type-card[data-state='today'] .type-layer-consent,
+  .type-card[data-state='consent'] .type-layer-today {
+    opacity: 0;
+  }
+  .type-illustrative {
+    margin: 0;
+  }
+
+  .type-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--lp-ink-display);
+  }
+
+  /* Both captions share one grid cell, so the box is as tall as the taller of
+     the two and nothing jumps when the state changes. The inactive one keeps
+     its hidden attribute (out of the accessibility tree) but keeps its space. */
+  .type-captions {
+    display: grid;
+  }
+  .type-caption {
+    grid-area: 1 / 1;
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--lp-ink);
+  }
+  .type-caption[hidden] {
+    display: block;
+    visibility: hidden;
+  }
+
+  /* Pushed to the foot of the card so the controls line up across the row. */
+  .type-controls {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .type-seg {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--lp-control, var(--lp-rule));
+  }
+  .type-seg-btn {
+    appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 8px 6px;
+    background: transparent;
+    border: 0;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    text-align: center;
+    color: var(--lp-mute-text);
+    cursor: pointer;
+    transition: color 120ms var(--lp-ease, ease), background-color 120ms var(--lp-ease, ease);
+  }
+  .type-seg-btn + .type-seg-btn {
+    border-left: 1px solid var(--lp-control, var(--lp-rule));
+  }
+  .type-seg-btn[aria-pressed='true'] {
+    color: var(--lp-ink-display);
+    background: var(--lp-paper);
+  }
+
+  .type-hint {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--lp-mute-text);
+  }
+
+  .types-close {
+    margin: 0;
+    font-size: clamp(20px, 2.2vw, 22px);
+    font-weight: 300;
+    line-height: 1.5;
+    max-width: 52ch;
+  }
+
+  @media (min-width: 720px) {
+    .types-body {
+      padding: 96px 0;
+    }
+    .types-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .type-figure {
+      max-width: none;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .types-body {
+      padding: 128px 0;
+      display: grid;
+      grid-template-columns: 200px minmax(0, 1fr);
+      column-gap: 32px;
+      align-items: start;
+    }
+    .types-main {
+      gap: 48px;
+    }
+    .types-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .type-caption {
+      font-size: 17px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .type-layer,
+    .type-card {
+      transition: none;
+    }
+  }
+</style>

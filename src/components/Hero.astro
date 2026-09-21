@@ -1,181 +1,427 @@
 ---
-import Section from './Section.astro';
-import Label from './Label.astro';
-interface Props { siteHint?: string | null; }
-const { siteHint } = Astro.props;
-const head = 'You may be sitting on more value than you realise.';
+// Hero. Renders one of three arrival states:
+//   cold           no ref at all
+//   letter-known   a ref and a site hint we recognise
+//   letter-unknown a ref we will check by hand
+interface Props {
+  ref?: string | null;
+  siteHint?: string | null;
+}
+const { ref = null, siteHint = null } = Astro.props;
 
-// Hero now sits on the same Marginalia grid as every section below it,
-// so the page has a single left spine from top to bottom.
-//   QR-arrival:  "R E"           + "the land at [site hint]"
-//   Cold arrival: "FOR LANDOWNERS" + "Across the United Kingdom."
-const railLabel = siteHint ? 'R E' : 'FOR LANDOWNERS';
+const isLetter = Boolean(ref);
+const hint = siteHint ? siteHint.trim().replace(/\.$/, '') : null;
+
+const headline = !isLetter
+  ? 'A fixed-price offer for your land, subject to planning.'
+  : hint
+    ? `I wrote to you about ${hint}.`
+    : 'I wrote to you about your land.';
+
+const subLede = isLetter
+  ? 'This page is here because you scanned the QR code on my letter. It is the same explanation I would give over the phone, set down so you can read it in your own time.'
+  : 'This is the same explanation I would give over the phone, set down in one place so you can read it in your own time.';
 ---
-<Section id="hero" style="padding-top: 96px; padding-bottom: 112px;">
-  <div class="lp-mg hero-grid">
-    <div class="hero-rail">
-      <Label asTag="div">{railLabel}</Label>
-      <div class="rail-sub lp-fine">
-        {siteHint ? (
-          <>the land at <span class="rail-emphasis">{siteHint}</span></>
-        ) : 'Across the United Kingdom.'}
+<section class="hero" data-hero>
+  <div class="lp-shell">
+    <div class="hero-grid">
+      <div class="hero-rail">
+        {isLetter && <p class="hero-badge">Letter {ref}</p>}
+        <p class="lp-eyebrow">For landowners</p>
+        {isLetter && !hint && (
+          <p class="lp-small hero-rail-note">
+            I will check reference {ref} personally when you get in touch.
+          </p>
+        )}
+        {!isLetter && <p class="lp-small hero-rail-line">Across the United Kingdom.</p>}
       </div>
-    </div>
 
-    <div class="hero-body">
-      <h1 class="lp-hero-head">{head}</h1>
+      <h1 class="lp-h1 hero-head">{headline}</h1>
 
-      <hr class="lp-hero-rule" />
-
-      <div class="lede-block">
-        <p class="lede">
-          I make landowners across the UK a fixed-price offer for their land, conditional on
-          planning permission. I cover the planning work and take the risk that goes with it.
-          You see the number before agreeing anything, and you are free to say no.
+      <div class="hero-body">
+        <p class="lp-lede hero-lede">
+          I pay for the planning work and take the risk that goes with it. The price is fixed in
+          writing before you agree to anything, and you are free to say no.
         </p>
-        <p class="sub-lede">
-          {siteHint
-            ? 'This page is here because you scanned the QR code on a letter I sent you. It is the same explanation I would give over the phone, set down in one place so you can read it in your own time.'
-            : 'This is the same explanation I would give over the phone, set down in one place so you can read it in your own time.'}
-        </p>
-      </div>
 
-      <div class="signature-block">
-        <div class="sig-name">Hayri Demirçapa</div>
-        <div class="sig-role">Founder &amp; Architect, Laterna+Partners</div>
-      </div>
+        <p class="hero-sub-lede">{subLede}</p>
 
-      <div class="cta-row">
-        <a href="tel:+447471127212" class="phone-cta">+44 7471 127212</a>
-
-        <div class="cta-meta">
-          <div class="cta-label">Direct line</div>
-          <div class="lp-fine cta-hint">
-            Weekdays, 09:00–18:00. A short, no-commitment call is the best place to start.
+        <div class="hero-actions" data-hero-actions>
+          <div class="hero-buttons">
+            <a class="lp-btn lp-btn-primary hero-call-link" href="tel:+447471127212">Call Hayri</a>
+            <button
+              type="button"
+              class="lp-btn lp-btn-primary hero-call-btn"
+              data-phone-reveal="hero"
+            >
+              <span>Call Hayri</span>
+              <span class="ph-num" hidden>+44 7471 127212</span>
+            </button>
+            <a
+              class="lp-btn lp-btn-secondary"
+              href="https://wa.me/447471127212"
+              target="_blank"
+              rel="noopener"
+            >WhatsApp</a>
           </div>
+          <span class="ph-status lp-small" role="status" aria-live="polite"></span>
+          <a class="lp-btn-link hero-message-link" href="#contact">Send a message instead</a>
         </div>
+
+        <p class="lp-small hero-microline">
+          Weekdays 09:00 to 18:00. Leave a message and I will call you back within one working day.
+        </p>
       </div>
 
-      <div class="read-on">
-        <a href="#how" class="lp-text-cta">Or read how this usually works <span class="arrow">→</span></a>
+      <figure class="hero-art">
+        <div class="hero-layers" data-letter={isLetter ? 'true' : null}>
+          <img
+            class="hero-layer hero-layer-grey"
+            src="/assets/sketches/hero-street-grey.webp"
+            alt=""
+            width="936"
+            height="702"
+            fetchpriority="high"
+            decoding="async"
+          />
+          <img
+            class="hero-layer hero-layer-blue"
+            src="/assets/sketches/hero-street-blue.webp"
+            alt="A street of terraced houses seen from above; behind them, on a garden plot, one new home is picked out in blue."
+            width="936"
+            height="702"
+            fetchpriority="high"
+            decoding="async"
+          />
+          {isLetter && <span class="hero-plot-label" aria-hidden="true">{ref}</span>}
+        </div>
+        <figcaption class="lp-caption hero-caption">
+          An ordinary street, with one plot worth a second look.
+        </figcaption>
+      </figure>
+
+      <div class="hero-sig">
+        <img
+          class="hero-portrait"
+          src="/assets/hayri-portrait.jpg"
+          alt="Hayri Demirçapa"
+          width="720"
+          height="900"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="hero-sig-text">
+          <p class="hero-sig-name">Hayri Demirçapa</p>
+          <p class="lp-small hero-sig-role">Founder &amp; Architect, Laterna+Partners</p>
+          <p class="lp-small hero-sig-line">
+            Based in South West London. Every letter and every call is me.
+          </p>
+          <a class="lp-btn-link" href="#about">More about me</a>
+        </div>
       </div>
     </div>
   </div>
-</Section>
+</section>
+
+<script>
+  import { copyText } from '../scripts/ui';
+
+  const PHONE = '+44 7471 127212';
+
+  document
+    .querySelectorAll<HTMLButtonElement>('[data-phone-reveal="hero"]')
+    .forEach((button) => {
+      const number = button.querySelector<HTMLElement>('.ph-num');
+      const actions = button.closest('[data-hero-actions]');
+      const status = actions?.querySelector<HTMLElement>('.ph-status') ?? null;
+      let timer = 0;
+
+      button.addEventListener('click', async () => {
+        if (number) number.hidden = false;
+        const copied = await copyText(PHONE);
+        if (!status) return;
+        status.textContent = copied === false ? '' : 'Copied';
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          status.textContent = '';
+        }, 4000);
+      });
+    });
+</script>
 
 <style>
-  .hero-grid { align-items: baseline; }
-  .rail-sub { margin-top: 10px; line-height: 1.6; }
-  .rail-emphasis { color: var(--lp-ink-display); }
+  .hero {
+    padding: 40px 0 56px;
+  }
 
-  .lp-hero-head {
-    font-family: var(--lp-sans);
-    font-size: clamp(40px, 6.4vw, 80px);
-    line-height: 1.05;
+  .hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* ---- rail ------------------------------------------------------------- */
+  .hero-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .hero-badge {
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    padding: 6px 16px;
+    border: 1px solid var(--lp-rule);
+    border-radius: 999px;
+    background: var(--lp-paper-soft);
+    color: var(--lp-ink-display);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero-rail-note,
+  .hero-rail-line {
+    margin: 0;
+    max-width: 30ch;
+  }
+
+  /* ---- headline and copy ------------------------------------------------ */
+  .hero-head {
+    margin: 0;
+    font-size: clamp(40px, 5.6vw, 80px);
     font-weight: 300;
+    line-height: 1.05;
     letter-spacing: -0.02em;
     color: var(--lp-ink-display);
-    margin: 0;
-    max-width: 17ch;
+    max-width: 20ch;
     text-wrap: balance;
   }
 
-  .lp-hero-rule {
-    border: 0;
-    border-top: 1px solid var(--lp-accent);
-    margin: 44px 0 32px;
-    max-width: 280px;
+  .hero-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
-
-  .lede-block { max-width: 54ch; }
-  .lede {
-    font-size: clamp(18px, 1.9vw, 22px);
-    line-height: 1.55;
-    font-weight: 300;
-    color: var(--lp-ink);
+  .hero-lede {
     margin: 0;
-    text-wrap: pretty;
+    max-width: 48ch;
   }
-  .sub-lede {
-    font-size: 16px;
-    line-height: 1.7;
-    color: var(--lp-mute);
-    margin: 20px 0 0;
-    text-wrap: pretty;
+  .hero-sub-lede {
+    margin: 0;
+    max-width: 52ch;
   }
 
-  .signature-block {
-    margin-top: 40px;
+  /* ---- actions ---------------------------------------------------------- */
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .hero-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .hero-buttons > * {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .hero-call-btn {
+    display: none;
+  }
+  .ph-num {
+    font-variant-numeric: tabular-nums;
+  }
+  .ph-status:empty {
+    display: none;
+  }
+  .hero-message-link {
+    align-self: flex-start;
+  }
+  .hero-microline {
+    margin: 0;
+    max-width: 46ch;
+  }
+
+  /* ---- drawing ---------------------------------------------------------- */
+  .hero-art {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .hero-layers {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+  .hero-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+  }
+  .hero-layer-grey {
+    animation: hero-fade 600ms var(--lp-ease, ease) 200ms forwards;
+  }
+  .hero-layer-blue {
+    animation: hero-fade 400ms var(--lp-ease, ease) 1400ms forwards;
+  }
+  .hero-plot-label {
+    position: absolute;
+    left: 39.1%;
+    top: 40%;
+    transform: translate(-50%, -100%);
+    margin-top: -14px;
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    background: var(--lp-paper-soft);
+    border: 1px solid var(--lp-rule);
+    color: var(--lp-ink-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    opacity: 0;
+    animation: hero-fade 180ms var(--lp-ease, ease) 1900ms forwards;
+  }
+  .hero-caption {
+    margin: 0;
+  }
+
+  @keyframes hero-fade {
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* ---- signature -------------------------------------------------------- */
+  .hero-sig {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .hero-portrait {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .hero-sig-text {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    font-size: 15px;
-    color: var(--lp-ink);
   }
-  .sig-name { color: var(--lp-ink-display); font-weight: 500; }
-  .sig-role {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--lp-mute);
-    margin-right: -0.18em;
-  }
-
-  .cta-row {
-    margin-top: 56px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 24px 48px;
-  }
-  .phone-cta {
-    font-size: clamp(24px, 3.2vw, 34px);
-    font-weight: 300;
-    color: var(--lp-ink-display);
-    text-decoration: none;
-    letter-spacing: -0.005em;
-    border-bottom: 1px solid var(--lp-ink-display);
-    padding-bottom: 4px;
-    transition: opacity 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
-  }
-  .phone-cta:hover { opacity: 0.6; }
-
-  .cta-meta { display: flex; flex-direction: column; gap: 8px; }
-  .cta-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--lp-accent);
-    margin-right: -0.18em;
-  }
-  .cta-hint { max-width: 28ch; }
-
-  .read-on { margin-top: 32px; }
-
-  /* Mobile: trim the generous Hero top padding so the headline doesn't sit
-     deep below the header on small screens. Padding-bottom can stay snug too. */
-  @media (max-width: 720px) {
-    :global(section#hero.lp-section) {
-      padding-top: 36px !important;
-      padding-bottom: 56px !important;
-    }
-    .lp-hero-rule { margin: 32px 0 24px; }
-    .signature-block { margin-top: 32px; }
-    .cta-row { margin-top: 40px; gap: 20px 24px; }
-  }
-  .lp-text-cta {
-    display: inline-block;
-    font-size: 15px;
+  .hero-sig-name {
+    margin: 0;
+    font-size: 18px;
     font-weight: 500;
     color: var(--lp-ink-display);
-    text-decoration: none;
-    border-bottom: 1px solid var(--lp-ink-display);
-    padding-bottom: 3px;
-    letter-spacing: 0.005em;
-    transition: opacity 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
   }
-  .lp-text-cta:hover { opacity: 0.6; }
-  .arrow { margin-left: 8px; }
+  .hero-sig-role,
+  .hero-sig-line {
+    margin: 0;
+    max-width: 38ch;
+  }
+  .hero-sig-line {
+    margin-top: 4px;
+  }
+  .hero-sig-text .lp-btn-link {
+    align-self: flex-start;
+  }
+
+  /* ---- 720 and up ------------------------------------------------------- */
+  @media (min-width: 720px) {
+    .hero {
+      padding: 72px 0 96px;
+    }
+    .hero-badge {
+      width: auto;
+    }
+    .hero-buttons {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-buttons > * {
+      width: auto;
+    }
+    .hero-call-link {
+      display: none;
+    }
+    .hero-call-btn {
+      display: inline-flex;
+    }
+    .hero-actions {
+      align-items: flex-start;
+    }
+    /* Between phone and desktop the drawing would otherwise run the full
+       width of the page, which dwarfs the words beside it. */
+    .hero-art {
+      max-width: 528px;
+    }
+  }
+
+  /* ---- 1024 and up: the Desktop A three-column arrangement -------------- */
+  @media (min-width: 1024px) {
+    .hero {
+      padding: 96px 0 128px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 200px minmax(0, 7fr) minmax(0, 9fr);
+      grid-template-areas:
+        'rail head head'
+        'rail body art'
+        'rail sig  art';
+      column-gap: 32px;
+      row-gap: 32px;
+      align-items: start;
+    }
+    .hero-rail {
+      grid-area: rail;
+    }
+    .hero-head {
+      grid-area: head;
+    }
+    .hero-body {
+      grid-area: body;
+    }
+    .hero-art {
+      grid-area: art;
+      gap: 16px;
+    }
+    .hero-sig {
+      grid-area: sig;
+      align-self: start;
+    }
+    .hero-lede {
+      max-width: none;
+    }
+    .hero-sub-lede {
+      max-width: none;
+    }
+  }
+
+  /* ---- reduced motion: show the finished drawing ------------------------ */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-layer,
+    .hero-plot-label {
+      animation: none;
+      opacity: 1;
+    }
+  }
 </style>
