@@ -206,7 +206,7 @@ const { ref = null } = Astro.props;
       if (tokenInput && !tokenInput.value) await fillFormToken(form);
 
       try {
-        const result = await postForm(form);
+        const { body: result } = await postForm(form);
         if (result && result.ok) {
           if (successLine) successLine.textContent = `On its way to ${email}.`;
           const url = (result as { download_url?: string }).download_url;

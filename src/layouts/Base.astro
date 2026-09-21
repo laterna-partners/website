@@ -79,17 +79,4 @@ const ogImageUrl = new URL('/assets/og-image.png', site).toString();
   /* Every direct media element gets a hard cap to avoid intrinsic-size
      overflow on narrow viewports. */
   img, svg, video { max-width: 100%; height: auto; }
-
-  /* Legacy glue for the pre-rebuild components still present until the
-     routes/upper-page/lower-page agents land their replacements. Their
-     new markup uses the classes defined in tokens.css instead. */
-  @media (max-width: 720px) {
-    .note-form,
-    .contact-form,
-    .risk-grid,
-    .how-grid {
-      grid-template-columns: 1fr !important;
-    }
-    .risk-answer { font-size: clamp(56px, 18vw, 96px) !important; }
-  }
 </style>

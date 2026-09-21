@@ -281,7 +281,7 @@ const siteLabel = ref
       if (tokenInput && !tokenInput.value) await fillFormToken(form);
 
       try {
-        const result = await postForm(form);
+        const { body: result } = await postForm(form);
         if (result && result.ok) {
           if (successNote) successNote.hidden = !(result as { note_requested?: boolean }).note_requested;
           // Hold the space the form occupied so nothing below it moves.
