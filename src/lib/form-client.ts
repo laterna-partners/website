@@ -91,3 +91,50 @@ export function resetTurnstile(containerId: string): void {
     // best effort only
   }
 }
+
+export interface PostFormResult {
+  status: number;
+  body: any;
+}
+
+// Serialises a form and POSTs it to its own action with fetch. Both
+// landowners-page forms (Contact, TakeHomeNote) use this so their inline
+// submit handlers share one fetch-and-parse path instead of each
+// reimplementing it.
+export async function postForm(form: HTMLFormElement): Promise<PostFormResult> {
+  const action = form.getAttribute('action') || form.action;
+  const formData = new FormData(form);
+  const res = await fetch(action, { method: 'POST', body: formData });
+  let body: any = null;
+  try {
+    body = await res.json();
+  } catch {
+    body = null;
+  }
+  return { status: res.status, body };
+}
+
+// Fire-and-forget click tracking for the tel:/wa.me/mailto: links (Call,
+// WhatsApp, Email). Uses navigator.sendBeacon where available, since it
+// survives the page unloading straight after the tap; falls back to fetch
+// with keepalive so the request still has a chance to land elsewhere.
+export function sendClick(channel: 'call' | 'whatsapp' | 'email', ref?: string | null): void {
+  try {
+    const payload = JSON.stringify({ channel, ref: ref || undefined });
+    if (navigator.sendBeacon) {
+      const blob = new Blob([payload], { type: 'application/json' });
+      navigator.sendBeacon('/api/click', blob);
+      return;
+    }
+    fetch('/api/click', {
+      method: 'POST',
+      body: payload,
+      headers: { 'content-type': 'application/json' },
+      keepalive: true,
+    }).catch(() => {
+      // best effort only
+    });
+  } catch {
+    // best effort only
+  }
+}
