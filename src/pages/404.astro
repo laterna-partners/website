@@ -1,0 +1,35 @@
+---
+export const prerender = false;
+import Base from '../layouts/Base.astro';
+---
+<Base title="Page not found: Laterna+Partners" description="That page is not here. Go to the landowner page instead.">
+  <main id="main-content">
+    <section class="not-found">
+      <div class="lp-shell not-found__inner">
+        <p class="lp-eyebrow">
+          <svg class="lp-plus" viewBox="0 0 36 36" aria-hidden="true"><rect x="15" y="0" width="6" height="36"></rect><rect x="0" y="15" width="36" height="6"></rect></svg>
+          Not found
+        </p>
+        <h1 class="lp-h1">That page is not here.</h1>
+        <p class="lp-lede">The page you are looking for does not exist, or has moved.</p>
+        <a class="lp-btn lp-btn-primary" href="/landowners">Go to the landowner page</a>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .not-found {
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+  }
+  .not-found__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+</style>

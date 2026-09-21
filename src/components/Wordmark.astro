@@ -1,19 +1,43 @@
 ---
+// Renders the full logo lockup (public/assets/laterna-logo-full.png) as an
+// <img>, sized from `size` (the wordmark's display height in px; width is
+// derived from the source image's own aspect ratio). The source PNG is
+// well above the display size at every size this component is used at, so
+// it renders crisp on retina screens without a separate 2x asset.
 interface Props { size?: number; color?: string; }
 const { size = 17, color } = Astro.props;
+
+// Intrinsic size of public/assets/laterna-logo-full.png.
+const SOURCE_WIDTH = 490;
+const SOURCE_HEIGHT = 200;
+const ASPECT = SOURCE_WIDTH / SOURCE_HEIGHT;
+
+const height = size;
+const width = Math.round(size * ASPECT);
+
+// `color` has no effect on a raster logo; it is kept so existing callers
+// that still pass it do not break. Intentionally unused otherwise.
+void color;
 ---
-<a href="#top" class="lp-wordmark" style={`font-size:${size}px; ${color ? `color:${color};` : ''}`}>
-  laterna<span class="dot">.</span>partners
+<a href="#top" class="lp-wordmark" aria-label="Laterna+Partners, home">
+  <img
+    src="/assets/laterna-logo-full.png"
+    alt="Laterna+Partners"
+    width={width}
+    height={height}
+  />
 </a>
 
 <style>
   .lp-wordmark {
     display: inline-block;
-    font-family: var(--lp-sans);
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    color: var(--lp-ink-display);
+    line-height: 0;
     text-decoration: none;
+    border-bottom: 0;
   }
-  .dot { color: var(--lp-accent); }
+  .lp-wordmark img {
+    display: block;
+    width: auto;
+    height: 100%;
+  }
 </style>

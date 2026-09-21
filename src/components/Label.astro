@@ -8,7 +8,7 @@ interface Props {
 const { asTag: Tag = 'span', tone = 'accent', style = '', class: extraClass = '' } = Astro.props;
 const isBlock = Tag !== 'span';
 const color =
-  tone === 'mute' ? 'var(--lp-mute)' :
+  tone === 'mute' ? 'var(--lp-mute-text)' :
   tone === 'ink'  ? 'var(--lp-ink-display)' :
                     'var(--lp-accent)';
 ---
@@ -21,14 +21,14 @@ const color =
 
 <style>
   .lp-label {
-    font-size: 11px;
+    font-size: var(--lp-fs-micro);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    line-height: 1.5;
+    letter-spacing: var(--lp-tr-label);
+    line-height: 1.4;
     white-space: nowrap;
     display: inline-block;
-    margin-right: -0.18em;
+    margin-right: calc(var(--lp-tr-label) * -1);
   }
   .lp-label--block {
     white-space: normal;
