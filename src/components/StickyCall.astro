@@ -1,20 +1,51 @@
 ---
+// The mobile bar: call, WhatsApp, message. On a letter arrival it is there
+// from first paint; on a cold arrival it slides up once the hero actions have
+// scrolled away. It gets out of the way while the contact form is on screen.
+interface Props { ref?: string | null }
+const { ref = null } = Astro.props;
 ---
-<div class="sticky-call">
-  <div class="sticky-grid">
-    <a href="tel:+447471127212" class="sticky-cell sticky-call-cell">
-      <span class="sticky-label sticky-label--accent">Call Hayri</span>
-      <span class="sticky-value">+44 7471 127212</span>
+<div class:list={['sticky-bar', ref && 'is-armed']} data-sticky-call>
+  <div class="cells">
+    <a class="cell" href="tel:+447471127212" data-click="call">
+      <span class="cell-label">Call Hayri</span>
+      <span class="cell-sub">+44 7471 127212</span>
     </a>
-    <a href="mailto:hayri@laterna.partners" class="sticky-cell">
-      <span class="sticky-label sticky-label--mute">Write</span>
-      <span class="sticky-value sticky-value--small">hayri@laterna.partners</span>
+    <a
+      class="cell"
+      href="https://wa.me/447471127212"
+      target="_blank"
+      rel="noopener"
+      data-click="whatsapp"
+    >
+      <span class="cell-label">WhatsApp</span>
+    </a>
+    <a class="cell" href="#contact">
+      <span class="cell-label">Message</span>
     </a>
   </div>
 </div>
+<div class="sticky-spacer" aria-hidden="true"></div>
+
+<script>
+  // Keep the bar out of the way while the contact form is in view: someone
+  // filling the form does not need a call button over the top of it.
+  const bar = document.querySelector<HTMLElement>('[data-sticky-call]');
+  const contactForm = document.getElementById('contact-form');
+
+  if (bar && contactForm && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) bar.classList.toggle('is-hidden', entry.isIntersecting);
+      },
+      { rootMargin: '-64px 0px 0px 0px' },
+    );
+    observer.observe(contactForm);
+  }
+</script>
 
 <style>
-  .sticky-call {
+  .sticky-bar {
     position: fixed;
     left: 0;
     right: 0;
@@ -22,42 +53,43 @@
     z-index: 50;
     background: var(--lp-paper);
     border-top: 1px solid var(--lp-rule);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-    box-shadow: 0 -8px 24px -16px rgba(0,0,0,0.08);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transform: translateY(110%);
+    transition: transform 320ms cubic-bezier(0.2, 0.6, 0.2, 1);
   }
-  .sticky-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  /* Letter arrivals: present from first paint. Cold arrivals: once the hero
+     actions have left the viewport (class set by the foundations observer). */
+  .sticky-bar.is-armed:not(.is-hidden),
+  :global(body.is-past-hero) .sticky-bar:not(.is-hidden) {
+    transform: translateY(0);
   }
-  .sticky-cell {
+
+  .cells { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cell {
+    min-height: 64px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 14px 8px;
+    gap: 2px;
+    padding: 10px 6px;
     text-decoration: none;
     color: var(--lp-ink-display);
-    min-height: 64px;
   }
-  .sticky-call-cell { border-right: 1px solid var(--lp-rule); }
-  .sticky-label {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    margin-right: -0.2em;
-  }
-  .sticky-label--accent { color: var(--lp-accent); }
-  .sticky-label--mute { color: var(--lp-mute); }
-  .sticky-value {
-    font-size: 17px;
-    font-weight: 500;
-    letter-spacing: -0.005em;
-  }
-  .sticky-value--small { font-size: 15px; letter-spacing: 0; }
+  .cell + .cell { border-left: 1px solid var(--lp-rule); }
+  .cell:active { background: var(--lp-accent-tint, #F4F9FD); }
+  .cell-label { font-size: 16px; font-weight: 500; line-height: 1.2; }
+  .cell-sub { font-size: 13px; line-height: 1.2; color: var(--lp-mute-text); }
+
+  /* Reserve the bar's height at the foot of the page so nothing sits under it. */
+  .sticky-spacer { height: calc(64px + env(safe-area-inset-bottom, 0px)); }
 
   @media (min-width: 720px) {
-    .sticky-call { display: none; }
+    .sticky-bar { display: none; }
+    .sticky-spacer { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticky-bar { transition: none; }
   }
 </style>
