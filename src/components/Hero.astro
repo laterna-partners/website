@@ -103,22 +103,9 @@ const subLede = isLetter
       </figure>
 
       <div class="hero-sig">
-        <img
-          class="hero-portrait"
-          src="/assets/hayri-portrait.jpg"
-          alt="Hayri Demirçapa"
-          width="720"
-          height="900"
-          loading="lazy"
-          decoding="async"
-        />
         <div class="hero-sig-text">
           <p class="hero-sig-name">Hayri Demirçapa</p>
           <p class="lp-small hero-sig-role">Founder &amp; Architect, Laterna+Partners</p>
-          <p class="lp-small hero-sig-line">
-            Based in South West London. Every letter and every call is me.
-          </p>
-          <a class="lp-btn-link" href="#about">More about me</a>
         </div>
       </div>
     </div>
@@ -314,13 +301,6 @@ const subLede = isLetter
     align-items: flex-start;
     gap: 16px;
   }
-  .hero-portrait {
-    flex: none;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
   .hero-sig-text {
     display: flex;
     flex-direction: column;
@@ -332,16 +312,9 @@ const subLede = isLetter
     font-weight: 500;
     color: var(--lp-ink-display);
   }
-  .hero-sig-role,
-  .hero-sig-line {
+  .hero-sig-role {
     margin: 0;
     max-width: 38ch;
-  }
-  .hero-sig-line {
-    margin-top: 4px;
-  }
-  .hero-sig-text .lp-btn-link {
-    align-self: flex-start;
   }
 
   /* ---- 720 and up ------------------------------------------------------- */

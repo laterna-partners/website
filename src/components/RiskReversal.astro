@@ -15,10 +15,9 @@ const ITEMS = [
       </div>
 
       <div class="catch-main">
-        <h2 class="lp-h2 catch-head">The thing every landowner asks.</h2>
-
+        
         <div class="catch-answer" data-catch>
-          <p class="catch-question">What you give up by getting in touch.</p>
+          <h2 class="lp-h2 catch-question">What you give up by getting in touch.</h2>
           <p class="catch-giant">Nothing.</p>
           <div class="catch-rule" aria-hidden="true"></div>
         </div>
@@ -79,15 +78,6 @@ const ITEMS = [
     flex-direction: column;
     gap: 32px;
   }
-  .catch-head {
-    margin: 0;
-    font-size: clamp(28px, 3.4vw, 44px);
-    font-weight: 300;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    color: var(--lp-ink-display);
-    text-wrap: balance;
-  }
 
   .catch-answer {
     display: flex;
@@ -96,11 +86,8 @@ const ITEMS = [
   }
   .catch-question {
     margin: 0;
-    font-size: clamp(20px, 2.2vw, 22px);
-    font-weight: 300;
-    line-height: 1.5;
-    color: var(--lp-ink);
-    max-width: 42ch;
+    max-width: 24ch;
+    text-wrap: balance;
   }
   .catch-giant {
     margin: 0;
