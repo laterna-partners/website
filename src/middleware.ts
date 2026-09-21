@@ -5,6 +5,7 @@ import { defineMiddleware } from 'astro:middleware';
 import { getSupabase } from './lib/supabase';
 import { lookupSiteHint } from './lib/site-hints';
 import { recordScan } from './lib/attio';
+import { waitUntil } from '@vercel/functions';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url);
@@ -22,25 +23,29 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (supabase) {
       const userAgent = context.request.headers.get('user-agent') ?? null;
       const referer = context.request.headers.get('referer') ?? null;
-      supabase
-        .from('qr_scans')
-        .insert({
-          ref,
-          path: url.pathname,
-          user_agent: userAgent,
-          referer,
-        })
-        .then(({ error }) => {
-          if (error) console.error('[qr_scans] insert failed', error.message);
-        });
+      // waitUntil keeps the Vercel function alive until this settles, so the
+      // insert is not frozen when the response goes out; locally it is a no-op
+      // and the promise simply runs.
+      waitUntil(
+        supabase
+          .from('qr_scans')
+          .insert({
+            ref,
+            path: url.pathname,
+            user_agent: userAgent,
+            referer,
+          })
+          .then(({ error }) => {
+            if (error) console.error('[qr_scans] insert failed', error.message);
+          }),
+      );
     } else {
       console.log(`[qr_scan] ${ref} hit ${url.pathname}`);
     }
 
-    // Best-effort CRM mirror. Not awaited: recordScan never throws (it
-    // catches internally) and the page must stay fast regardless of Attio's
-    // response time.
-    recordScan(ref);
+    // Best-effort CRM mirror. Not awaited, so the page stays fast whatever
+    // Attio's response time; waitUntil lets it finish after the response.
+    waitUntil(recordScan(ref));
   }
 
   return next();

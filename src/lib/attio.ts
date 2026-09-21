@@ -18,7 +18,7 @@ const ATTIO_API_BASE = 'https://api.attio.com/v2';
 const DEALS = 'deals';
 const PEOPLE = 'people';
 const DEAL_REF_ATTR = 'site_reference';
-const ATTIO_TIMEOUT_MS = 3_000;
+const ATTIO_TIMEOUT_MS = 6_000;
 
 let warned = false;
 
